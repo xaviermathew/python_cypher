@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from cypher_tokenizer import *
+from .cypher_tokenizer import *
 from ply import yacc
 
 next_anonymous_variable = 0
@@ -46,7 +46,7 @@ def constraint_function(function_string):
 class ParsingException(Exception):
     """A generic Exception class for the parser."""
     def __init__(self, msg):
-        print msg
+        print (msg)
 
 
 class AtomicFact(object):
@@ -385,7 +385,7 @@ def p_return_variables(p):
 
 
 def p_error(p):
-    import pdb; pdb.set_trace()
+#    import pdb; pdb.set_trace()
     raise ParsingException("Generic error while parsing.")
 
 

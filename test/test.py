@@ -29,7 +29,8 @@ class TestPythonCypher(unittest.TestCase):
         for i in test_parser.query(g, query):
             pass
         self.assertEqual(len(g.node), 2)
-        self.assertEqual(len(g.edge), 2)
+#        self.assertEqual(len(g.edge), 2)
+        self.assertEqual(len(g.edges()), 1)
 
     def test_return_attribute(self):
         """Test we can return attribute from matching node"""
@@ -39,6 +40,7 @@ class TestPythonCypher(unittest.TestCase):
         test_parser = python_cypher.CypherToNetworkx()
         list(test_parser.query(g, create_query))
         out = list(test_parser.query(g, match_query))
+        print (f"query:----------------- {out}")
         # self.assertEqual(out[0], ['bar'])
 
 

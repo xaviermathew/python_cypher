@@ -10,10 +10,10 @@ import copy
 import hashlib
 import random
 import time
-from cypher_tokenizer import *
-from cypher_parser import *
+from .cypher_tokenizer import *
+from .cypher_parser import *
 
-PRINT_TOKENS = True
+PRINT_TOKENS = False #True
 PRINT_MATCHING_ASSIGNMENTS = False
 
 
@@ -65,7 +65,7 @@ class CypherParserBaseClass(object):
         tok = self.tokenizer.token()
         while tok:
             if PRINT_TOKENS:
-                print tok
+                print (tok)
             tok = self.tokenizer.token()
         return self.parser.parse(query)
 
@@ -131,8 +131,12 @@ class CypherParserBaseClass(object):
                         target_node = assignment[target_designation]
                         for one_edge_id in self._edges_connecting_nodes(
                                 graph_object, source_node, target_node):
+                            print (f"xxxxxxxxxxxxxxx> {edge_label} {one_edge_id}")
+
                             one_edge = self._get_edge_from_id(
                                 graph_object, one_edge_id)
+                            
+                            print (f"yyyyyyyyyyyyyyy> {edge_label} {one_edge}")
                             if (edge_label is None or
                                     self._edge_class(one_edge) == edge_label):
                                 edge_sentinal = True
@@ -196,7 +200,7 @@ class CypherParserBaseClass(object):
                             return_values.append(return_value)
                         yield return_values
                     else:
-                        import pdb; pdb.set_trace()
+#                        import pdb; pdb.set_trace()
                         raise Exception("Unhandled case in query function.")
 
     def head_create_query(self, graph_object, parsed_query):
@@ -291,18 +295,24 @@ class CypherToNetworkx(CypherParserBaseClass):
         return node_name in graph_object.node
 
     def _is_edge(self, graph_object, edge_name):
-        for source_node_id, connections_dict in graph_object.edge.iteritems():
-            for _, edges_dict in connections_dict.iteritems():
-                for _, edge_dict in edges_dict.iteritems():
+#TODO        for source_node_id, connections_dict in graph_object.edge.iteritems():
+        for source_node_id, d, connections_dict in graph_object.edges.data():
+            for _, edges_dict in connections_dict.items (): #iteritems():
+                if edges_dict == edge_name:
+                    return True
+                '''
+                for _, edge_dict in edges_dict.items(): #iteritems():
                     if edge_dict.get('_id', None) == edge_name:
                         return True
+                '''
         return False
 
     def _get_node(self, graph_object, node_name):
         return graph_object.node[node_name]
 
     def _get_edge(self, graph_object, edge_name):
-        for source_node_id, connections_dict in graph_object.edge.iteritems():
+#        for source_node_id, connections_dict in graph_object.edge.iteritems():
+        for source_node_id, connections_dict in graph_object.edges():
             for _, edges_dict in connections_dict.iteritems():
                 for _, edge_dict in edges_dict.iteritems():
                     if edge_dict.get('_id', None) == edge_name:
@@ -336,17 +346,30 @@ class CypherToNetworkx(CypherParserBaseClass):
         raise NotImplementedError("Haven't finished _edge_exists.")
 
     def _get_edge_from_id(self, graph_object, edge_id):
+        for source, target_id, data in graph_object.edges(data=True):
+            #print (f">>>> {source} {target_id} {edge_id} match:{edge_id==target_id}")
+            if target_id == edge_id:
+                return (source, target_id, data)
+        #TODO
+        '''
         for source, target_dict in graph_object.edge.iteritems():
-            for target, edge_dict in target_dict.iteritems():
+            print (f"--- {target_dict}")
+            for target, edge_dict in target_dict.items (): #iteritems():
+                print (f"--- {target} {edge_dict}")
                 for index, one_edge in edge_dict.iteritems():
                     if one_edge['_id'] == edge_id:
                         return one_edge
-
+        '''
     def _edges_connecting_nodes(self, graph_object, source, target):
         try:
-            for index, data in graph_object.edge[source].get(
-                    target, {}).iteritems():
-                yield data['_id']
+            #TODO            for index, data in graph_object.edge[source].get(
+            #                    target, {}).iteritems():
+#            print (f"----------- {source}")
+#            print (f"----------- {graph_object.edges([source])}")
+
+            for index, e, data in graph_object.edges([source], data=True): #.get(target, {}).items():
+                print (f"..............>>> {index} {e} {data}")
+                yield e #data #['_id']
         except:
             raise Exception("Error getting edges connecting nodes.")
 
@@ -355,7 +378,9 @@ class CypherToNetworkx(CypherParserBaseClass):
 
     def _edge_class(self, edge, class_key='edge_label'):
         try:
-            out = edge.get(class_key, None)
+            print (f"----ec------> {edge}")
+            out = edge[2].get(class_key, None)
+            print (f"----ec2------> {edge} {out}")
         except AttributeError:
             out = None
         return out
@@ -378,7 +403,8 @@ class CypherToNetworkx(CypherParserBaseClass):
 
 def random_hash():
     """Return a random hash for naming new nods and edges."""
-    hash_value = hashlib.md5(str(random.random() + time.time())).hexdigest()
+#    hash_value = hashlib.md5(str(random.random() + time.time())).hexdigest()
+    hash_value = hashlib.md5(str(random.random() + time.time()).encode('utf-8')).hexdigest()
     return hash_value
 
 
@@ -450,7 +476,7 @@ def extract_atomic_facts(query):
         elif isinstance(subquery, CreateClause):
             _recurse(subquery.create_clause)
         else:
-            import pdb; pdb.set_trace()
+#            import pdb; pdb.set_trace()
             raise Exception(
                 'unhandled case in extract_atomic_facts:' + (
                     subquery.__class__.__name__))
@@ -481,7 +507,7 @@ def main():
     for i in my_parser.query(graph_object, create_query):
         pass  # a generator, we need to loop over results to run.
     for i in my_parser.query(graph_object, test_query):
-        print i
+        print (i)
 
 
 if __name__ == '__main__':

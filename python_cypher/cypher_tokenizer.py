@@ -61,7 +61,7 @@ t_ignore = r' '
 
 
 def t_error(t):
-    print 'tokenizer error'
+    print ('tokenizer error')
 
 
 def t_MATCH(t):
