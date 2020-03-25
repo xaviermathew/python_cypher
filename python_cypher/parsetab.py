@@ -6,9 +6,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'full_queryAND COLON COMMA CREATE DASH DOT EQUALS GREATERTHAN GREATERTHAN_OR_EQUAL INTEGER KEY LBRACKET LCURLEY LEFT_ARROW LESSTHAN LESSTHAN_OR_EQUAL LPAREN MATCH NAME NOT NOT_EQUAL OR QUOTE RBRACKET RCURLEY RETURN RIGHT_ARROW RPAREN STRING WHERE WHITESPACEnode_clause : LPAREN KEY RPAREN\n                   | LPAREN COLON NAME RPAREN\n                   | LPAREN KEY COLON NAME RPAREN\n                   | LPAREN KEY COLON NAME condition_list RPARENcondition_list : KEY COLON STRING\n                      | KEY COLON INTEGER\n                      | condition_list COMMA condition_list\n                      | LCURLEY condition_list RCURLEY\n                      | KEY COLON condition_listconstraint : keypath EQUALS STRING\n                  | keypath EQUALS INTEGER\n                  | keypath EQUALS keypath\n                  | keypath NOT_EQUAL INTEGER\n                  | keypath GREATERTHAN INTEGER\n                  | keypath GREATERTHAN_OR_EQUAL INTEGER\n                  | keypath LESSTHAN INTEGER\n                  | keypath LESSTHAN_OR_EQUAL INTEGER\n                  | constraint OR constraint\n                  | constraint AND constraint\n                  | NOT constraint\n                  | LPAREN constraint RPARENwhere_clause : WHERE constraintkeypath : KEY DOT KEY\n               | keypath DOT KEYedge_condition : LBRACKET COLON NAME RBRACKET\n                      | LBRACKET KEY COLON NAME RBRACKETlabeled_edge : DASH edge_condition DASH GREATERTHAN\n                    | LESSTHAN DASH edge_condition DASHliterals : node_clause\n                | literals COMMA literals\n                | literals RIGHT_ARROW literals\n                | literals LEFT_ARROW literals\n                | literals labeled_edge literalsmatch_where : MATCH literals\n                   | MATCH literals where_clausecreate_clause : CREATE literalsfull_query : match_where return_variables\n                  | create_clause\n                  | create_clause return_variablesreturn_variables : RETURN KEY\n                        | RETURN keypath\n                        | return_variables COMMA KEY\n                        | return_variables COMMA keypath'
+_lr_signature = 'full_queryAND COLON COMMA CREATE DASH DOT EQUALS GREATERTHAN GREATERTHAN_OR_EQUAL INTEGER KEY LBRACKET LCURLEY LEFT_ARROW LESSTHAN LESSTHAN_OR_EQUAL LPAREN MATCH NAME NOT NOT_EQUAL OR QUOTE RBRACKET RCURLEY RETURN RIGHT_ARROW RPAREN STRING WHERE WHITESPACEnode_clause : LPAREN KEY RPAREN\n                   | LPAREN COLON NAME RPAREN\n                   | LPAREN KEY COLON NAME RPAREN\n                   | LPAREN KEY COLON NAME condition_list RPARENcondition_list : KEY COLON STRING\n                      | KEY COLON INTEGER\n                      | condition_list COMMA condition_list\n                      | LCURLEY condition_list RCURLEY\n                      | KEY COLON condition_listconstraint : keypath EQUALS STRING\n                  | keypath EQUALS INTEGER\n                  | keypath EQUALS keypath\n                  | keypath NOT_EQUAL INTEGER\n                  | keypath GREATERTHAN INTEGER\n                  | keypath GREATERTHAN_OR_EQUAL INTEGER\n                  | keypath LESSTHAN INTEGER\n                  | keypath LESSTHAN_OR_EQUAL INTEGER\n                  | constraint OR constraint\n                  | constraint AND constraint\n                  | NOT constraint\n                  | LPAREN constraint RPARENwhere_clause : WHERE constraintkeypath : KEY DOT KEY\n               | keypath DOT KEYedge_condition : LBRACKET COLON NAME RBRACKET\n                      | LBRACKET COLON NAME condition_list RBRACKET\n                      | LBRACKET KEY COLON NAME RBRACKET\n                      | LBRACKET KEY COLON NAME condition_list RBRACKETlabeled_edge : DASH edge_condition DASH GREATERTHAN\n                    | LESSTHAN DASH edge_condition DASHliterals : node_clause\n                | literals COMMA literals\n                | literals RIGHT_ARROW literals\n                | literals LEFT_ARROW literals\n                | literals labeled_edge literalsmatch_where : MATCH literals\n                   | MATCH literals where_clausecreate_clause : CREATE literalsfull_query : match_where return_variables\n                  | create_clause\n                  | create_clause return_variablesreturn_variables : RETURN KEY\n                        | RETURN keypath\n                        | return_variables COMMA KEY\n                        | return_variables COMMA keypath'
     
-_lr_action_items = {'MATCH':([0,],[4,]),'CREATE':([0,],[5,]),'$end':([1,3,6,8,10,12,14,15,26,27,30,31,32,33,42,45,46,62,79,85,],[0,-38,-37,-39,-29,-36,-40,-41,-42,-43,-30,-31,-32,-33,-1,-23,-24,-2,-3,-4,]),'RETURN':([2,3,9,10,12,16,30,31,32,33,34,42,45,46,55,62,63,64,65,66,67,68,69,70,71,72,73,79,85,],[7,7,-34,-29,-36,-35,-30,-31,-32,-33,-22,-1,-23,-24,-20,-2,-18,-19,-12,-10,-11,-13,-14,-15,-16,-17,-21,-3,-4,]),'LPAREN':([4,5,17,18,19,20,21,36,37,47,48,74,77,],[11,11,11,11,11,11,37,37,37,37,37,-27,-28,]),'COMMA':([6,8,9,10,12,14,15,26,27,30,31,32,33,42,45,46,62,79,80,85,87,89,90,91,92,93,],[13,13,17,-29,17,-40,-41,-42,-43,17,17,17,17,-1,-23,-24,-2,-3,86,-4,86,-5,-6,86,86,-8,]),'KEY':([7,11,13,21,28,29,36,37,40,47,48,49,61,81,84,86,],[14,24,26,38,45,46,38,38,59,38,38,38,78,78,78,78,]),'RIGHT_ARROW':([9,10,12,30,31,32,33,42,62,79,85,],[18,-29,18,18,18,18,18,-1,-2,-3,-4,]),'LEFT_ARROW':([9,10,12,30,31,32,33,42,62,79,85,],[19,-29,19,19,19,19,19,-1,-2,-3,-4,]),'WHERE':([9,10,30,31,32,33,42,62,79,85,],[21,-29,-30,-31,-32,-33,-1,-2,-3,-4,]),'DASH':([9,10,12,23,30,31,32,33,39,42,60,62,79,82,85,88,],[22,-29,22,41,22,22,22,22,57,-1,77,-2,-3,-25,-4,-26,]),'LESSTHAN':([9,10,12,30,31,32,33,35,42,45,46,62,79,85,],[23,-29,23,23,23,23,23,53,-1,-23,-24,-2,-3,-4,]),'COLON':([11,24,40,59,78,],[25,43,58,76,84,]),'DOT':([14,15,26,27,35,38,45,46,65,],[28,29,28,29,29,28,-23,-24,29,]),'NOT':([21,36,37,47,48,],[36,36,36,36,36,]),'LBRACKET':([22,41,],[40,40,]),'RPAREN':([24,44,45,46,55,56,61,63,64,65,66,67,68,69,70,71,72,73,80,89,90,91,92,93,],[42,62,-23,-24,-20,73,79,-18,-19,-12,-10,-11,-13,-14,-15,-16,-17,-21,85,-5,-6,-9,-7,-8,]),'NAME':([25,43,58,76,],[44,61,75,83,]),'OR':([34,45,46,55,56,63,64,65,66,67,68,69,70,71,72,73,],[47,-23,-24,47,47,47,47,-12,-10,-11,-13,-14,-15,-16,-17,-21,]),'AND':([34,45,46,55,56,63,64,65,66,67,68,69,70,71,72,73,],[48,-23,-24,48,48,48,48,-12,-10,-11,-13,-14,-15,-16,-17,-21,]),'EQUALS':([35,45,46,],[49,-23,-24,]),'NOT_EQUAL':([35,45,46,],[50,-23,-24,]),'GREATERTHAN':([35,45,46,57,],[51,-23,-24,74,]),'GREATERTHAN_OR_EQUAL':([35,45,46,],[52,-23,-24,]),'LESSTHAN_OR_EQUAL':([35,45,46,],[54,-23,-24,]),'STRING':([49,84,],[66,89,]),'INTEGER':([49,50,51,52,53,54,84,],[67,68,69,70,71,72,90,]),'LCURLEY':([61,81,84,86,],[81,81,81,81,]),'RBRACKET':([75,83,],[82,88,]),'RCURLEY':([87,89,90,91,92,93,],[93,-5,-6,-9,-7,-8,]),}
+_lr_action_items = {'MATCH':([0,],[4,]),'CREATE':([0,],[5,]),'$end':([1,3,6,8,10,12,14,15,26,27,30,31,32,33,42,45,46,62,79,86,],[0,-40,-39,-41,-31,-38,-42,-43,-44,-45,-32,-33,-34,-35,-1,-23,-24,-2,-3,-4,]),'RETURN':([2,3,9,10,12,16,30,31,32,33,34,42,45,46,55,62,63,64,65,66,67,68,69,70,71,72,73,79,86,],[7,7,-36,-31,-38,-37,-32,-33,-34,-35,-22,-1,-23,-24,-20,-2,-18,-19,-12,-10,-11,-13,-14,-15,-16,-17,-21,-3,-4,]),'LPAREN':([4,5,17,18,19,20,21,36,37,47,48,74,77,],[11,11,11,11,11,11,37,37,37,37,37,-29,-30,]),'COMMA':([6,8,9,10,12,14,15,26,27,30,31,32,33,42,45,46,62,79,80,83,86,88,91,92,93,94,95,96,],[13,13,17,-31,17,-42,-43,-44,-45,17,17,17,17,-1,-23,-24,-2,-3,87,87,-4,87,87,-5,-6,87,87,-8,]),'KEY':([7,11,13,21,28,29,36,37,40,47,48,49,61,75,81,84,85,87,],[14,24,26,38,45,46,38,38,59,38,38,38,78,78,78,78,78,78,]),'RIGHT_ARROW':([9,10,12,30,31,32,33,42,62,79,86,],[18,-31,18,18,18,18,18,-1,-2,-3,-4,]),'LEFT_ARROW':([9,10,12,30,31,32,33,42,62,79,86,],[19,-31,19,19,19,19,19,-1,-2,-3,-4,]),'WHERE':([9,10,30,31,32,33,42,62,79,86,],[21,-31,-32,-33,-34,-35,-1,-2,-3,-4,]),'DASH':([9,10,12,23,30,31,32,33,39,42,60,62,79,82,86,89,90,97,],[22,-31,22,41,22,22,22,22,57,-1,77,-2,-3,-25,-4,-26,-27,-28,]),'LESSTHAN':([9,10,12,30,31,32,33,35,42,45,46,62,79,86,],[23,-31,23,23,23,23,23,53,-1,-23,-24,-2,-3,-4,]),'COLON':([11,24,40,59,78,],[25,43,58,76,85,]),'DOT':([14,15,26,27,35,38,45,46,65,],[28,29,28,29,29,28,-23,-24,29,]),'NOT':([21,36,37,47,48,],[36,36,36,36,36,]),'LBRACKET':([22,41,],[40,40,]),'RPAREN':([24,44,45,46,55,56,61,63,64,65,66,67,68,69,70,71,72,73,80,92,93,94,95,96,],[42,62,-23,-24,-20,73,79,-18,-19,-12,-10,-11,-13,-14,-15,-16,-17,-21,86,-5,-6,-9,-7,-8,]),'NAME':([25,43,58,76,],[44,61,75,84,]),'OR':([34,45,46,55,56,63,64,65,66,67,68,69,70,71,72,73,],[47,-23,-24,47,47,47,47,-12,-10,-11,-13,-14,-15,-16,-17,-21,]),'AND':([34,45,46,55,56,63,64,65,66,67,68,69,70,71,72,73,],[48,-23,-24,48,48,48,48,-12,-10,-11,-13,-14,-15,-16,-17,-21,]),'EQUALS':([35,45,46,],[49,-23,-24,]),'NOT_EQUAL':([35,45,46,],[50,-23,-24,]),'GREATERTHAN':([35,45,46,57,],[51,-23,-24,74,]),'GREATERTHAN_OR_EQUAL':([35,45,46,],[52,-23,-24,]),'LESSTHAN_OR_EQUAL':([35,45,46,],[54,-23,-24,]),'STRING':([49,85,],[66,92,]),'INTEGER':([49,50,51,52,53,54,85,],[67,68,69,70,71,72,93,]),'LCURLEY':([61,75,81,84,85,87,],[81,81,81,81,81,81,]),'RBRACKET':([75,83,84,91,92,93,94,95,96,],[82,89,90,97,-5,-6,-9,-7,-8,]),'RCURLEY':([88,92,93,94,95,96,],[96,-5,-6,-9,-7,-8,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -17,7 +17,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'full_query':([0,],[1,]),'match_where':([0,],[2,]),'create_clause':([0,],[3,]),'return_variables':([2,3,],[6,8,]),'literals':([4,5,17,18,19,20,],[9,12,30,31,32,33,]),'node_clause':([4,5,17,18,19,20,],[10,10,10,10,10,10,]),'keypath':([7,13,21,36,37,47,48,49,],[15,27,35,35,35,35,35,65,]),'where_clause':([9,],[16,]),'labeled_edge':([9,12,30,31,32,33,],[20,20,20,20,20,20,]),'constraint':([21,36,37,47,48,],[34,55,56,63,64,]),'edge_condition':([22,41,],[39,60,]),'condition_list':([61,81,84,86,],[80,87,91,92,]),}
+_lr_goto_items = {'full_query':([0,],[1,]),'match_where':([0,],[2,]),'create_clause':([0,],[3,]),'return_variables':([2,3,],[6,8,]),'literals':([4,5,17,18,19,20,],[9,12,30,31,32,33,]),'node_clause':([4,5,17,18,19,20,],[10,10,10,10,10,10,]),'keypath':([7,13,21,36,37,47,48,49,],[15,27,35,35,35,35,35,65,]),'where_clause':([9,],[16,]),'labeled_edge':([9,12,30,31,32,33,],[20,20,20,20,20,20,]),'constraint':([21,36,37,47,48,],[34,55,56,63,64,]),'edge_condition':([22,41,],[39,60,]),'condition_list':([61,75,81,84,85,87,],[80,83,88,91,94,95,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -27,47 +27,49 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
   ("S' -> full_query","S'",1,None,None,None),
-  ('node_clause -> LPAREN KEY RPAREN','node_clause',3,'p_node_clause','cypher_parser.py',185),
-  ('node_clause -> LPAREN COLON NAME RPAREN','node_clause',4,'p_node_clause','cypher_parser.py',186),
-  ('node_clause -> LPAREN KEY COLON NAME RPAREN','node_clause',5,'p_node_clause','cypher_parser.py',187),
-  ('node_clause -> LPAREN KEY COLON NAME condition_list RPAREN','node_clause',6,'p_node_clause','cypher_parser.py',188),
-  ('condition_list -> KEY COLON STRING','condition_list',3,'p_condition','cypher_parser.py',206),
-  ('condition_list -> KEY COLON INTEGER','condition_list',3,'p_condition','cypher_parser.py',207),
-  ('condition_list -> condition_list COMMA condition_list','condition_list',3,'p_condition','cypher_parser.py',208),
-  ('condition_list -> LCURLEY condition_list RCURLEY','condition_list',3,'p_condition','cypher_parser.py',209),
-  ('condition_list -> KEY COLON condition_list','condition_list',3,'p_condition','cypher_parser.py',210),
-  ('constraint -> keypath EQUALS STRING','constraint',3,'p_constraint','cypher_parser.py',225),
-  ('constraint -> keypath EQUALS INTEGER','constraint',3,'p_constraint','cypher_parser.py',226),
-  ('constraint -> keypath EQUALS keypath','constraint',3,'p_constraint','cypher_parser.py',227),
-  ('constraint -> keypath NOT_EQUAL INTEGER','constraint',3,'p_constraint','cypher_parser.py',228),
-  ('constraint -> keypath GREATERTHAN INTEGER','constraint',3,'p_constraint','cypher_parser.py',229),
-  ('constraint -> keypath GREATERTHAN_OR_EQUAL INTEGER','constraint',3,'p_constraint','cypher_parser.py',230),
-  ('constraint -> keypath LESSTHAN INTEGER','constraint',3,'p_constraint','cypher_parser.py',231),
-  ('constraint -> keypath LESSTHAN_OR_EQUAL INTEGER','constraint',3,'p_constraint','cypher_parser.py',232),
-  ('constraint -> constraint OR constraint','constraint',3,'p_constraint','cypher_parser.py',233),
-  ('constraint -> constraint AND constraint','constraint',3,'p_constraint','cypher_parser.py',234),
-  ('constraint -> NOT constraint','constraint',2,'p_constraint','cypher_parser.py',235),
-  ('constraint -> LPAREN constraint RPAREN','constraint',3,'p_constraint','cypher_parser.py',236),
-  ('where_clause -> WHERE constraint','where_clause',2,'p_where_clause','cypher_parser.py',262),
-  ('keypath -> KEY DOT KEY','keypath',3,'p_keypath','cypher_parser.py',270),
-  ('keypath -> keypath DOT KEY','keypath',3,'p_keypath','cypher_parser.py',271),
-  ('edge_condition -> LBRACKET COLON NAME RBRACKET','edge_condition',4,'p_edge_condition','cypher_parser.py',283),
-  ('edge_condition -> LBRACKET KEY COLON NAME RBRACKET','edge_condition',5,'p_edge_condition','cypher_parser.py',284),
-  ('labeled_edge -> DASH edge_condition DASH GREATERTHAN','labeled_edge',4,'p_labeled_edge','cypher_parser.py',295),
-  ('labeled_edge -> LESSTHAN DASH edge_condition DASH','labeled_edge',4,'p_labeled_edge','cypher_parser.py',296),
-  ('literals -> node_clause','literals',1,'p_literals','cypher_parser.py',308),
-  ('literals -> literals COMMA literals','literals',3,'p_literals','cypher_parser.py',309),
-  ('literals -> literals RIGHT_ARROW literals','literals',3,'p_literals','cypher_parser.py',310),
-  ('literals -> literals LEFT_ARROW literals','literals',3,'p_literals','cypher_parser.py',311),
-  ('literals -> literals labeled_edge literals','literals',3,'p_literals','cypher_parser.py',312),
-  ('match_where -> MATCH literals','match_where',2,'p_match_where','cypher_parser.py',351),
-  ('match_where -> MATCH literals where_clause','match_where',3,'p_match_where','cypher_parser.py',352),
-  ('create_clause -> CREATE literals','create_clause',2,'p_create','cypher_parser.py',362),
-  ('full_query -> match_where return_variables','full_query',2,'p_full_query','cypher_parser.py',367),
-  ('full_query -> create_clause','full_query',1,'p_full_query','cypher_parser.py',368),
-  ('full_query -> create_clause return_variables','full_query',2,'p_full_query','cypher_parser.py',369),
-  ('return_variables -> RETURN KEY','return_variables',2,'p_return_variables','cypher_parser.py',376),
-  ('return_variables -> RETURN keypath','return_variables',2,'p_return_variables','cypher_parser.py',377),
-  ('return_variables -> return_variables COMMA KEY','return_variables',3,'p_return_variables','cypher_parser.py',378),
-  ('return_variables -> return_variables COMMA keypath','return_variables',3,'p_return_variables','cypher_parser.py',379),
+  ('node_clause -> LPAREN KEY RPAREN','node_clause',3,'p_node_clause','cypher_parser.py',186),
+  ('node_clause -> LPAREN COLON NAME RPAREN','node_clause',4,'p_node_clause','cypher_parser.py',187),
+  ('node_clause -> LPAREN KEY COLON NAME RPAREN','node_clause',5,'p_node_clause','cypher_parser.py',188),
+  ('node_clause -> LPAREN KEY COLON NAME condition_list RPAREN','node_clause',6,'p_node_clause','cypher_parser.py',189),
+  ('condition_list -> KEY COLON STRING','condition_list',3,'p_condition','cypher_parser.py',207),
+  ('condition_list -> KEY COLON INTEGER','condition_list',3,'p_condition','cypher_parser.py',208),
+  ('condition_list -> condition_list COMMA condition_list','condition_list',3,'p_condition','cypher_parser.py',209),
+  ('condition_list -> LCURLEY condition_list RCURLEY','condition_list',3,'p_condition','cypher_parser.py',210),
+  ('condition_list -> KEY COLON condition_list','condition_list',3,'p_condition','cypher_parser.py',211),
+  ('constraint -> keypath EQUALS STRING','constraint',3,'p_constraint','cypher_parser.py',227),
+  ('constraint -> keypath EQUALS INTEGER','constraint',3,'p_constraint','cypher_parser.py',228),
+  ('constraint -> keypath EQUALS keypath','constraint',3,'p_constraint','cypher_parser.py',229),
+  ('constraint -> keypath NOT_EQUAL INTEGER','constraint',3,'p_constraint','cypher_parser.py',230),
+  ('constraint -> keypath GREATERTHAN INTEGER','constraint',3,'p_constraint','cypher_parser.py',231),
+  ('constraint -> keypath GREATERTHAN_OR_EQUAL INTEGER','constraint',3,'p_constraint','cypher_parser.py',232),
+  ('constraint -> keypath LESSTHAN INTEGER','constraint',3,'p_constraint','cypher_parser.py',233),
+  ('constraint -> keypath LESSTHAN_OR_EQUAL INTEGER','constraint',3,'p_constraint','cypher_parser.py',234),
+  ('constraint -> constraint OR constraint','constraint',3,'p_constraint','cypher_parser.py',235),
+  ('constraint -> constraint AND constraint','constraint',3,'p_constraint','cypher_parser.py',236),
+  ('constraint -> NOT constraint','constraint',2,'p_constraint','cypher_parser.py',237),
+  ('constraint -> LPAREN constraint RPAREN','constraint',3,'p_constraint','cypher_parser.py',238),
+  ('where_clause -> WHERE constraint','where_clause',2,'p_where_clause','cypher_parser.py',264),
+  ('keypath -> KEY DOT KEY','keypath',3,'p_keypath','cypher_parser.py',272),
+  ('keypath -> keypath DOT KEY','keypath',3,'p_keypath','cypher_parser.py',273),
+  ('edge_condition -> LBRACKET COLON NAME RBRACKET','edge_condition',4,'p_edge_condition','cypher_parser.py',285),
+  ('edge_condition -> LBRACKET COLON NAME condition_list RBRACKET','edge_condition',5,'p_edge_condition','cypher_parser.py',286),
+  ('edge_condition -> LBRACKET KEY COLON NAME RBRACKET','edge_condition',5,'p_edge_condition','cypher_parser.py',287),
+  ('edge_condition -> LBRACKET KEY COLON NAME condition_list RBRACKET','edge_condition',6,'p_edge_condition','cypher_parser.py',288),
+  ('labeled_edge -> DASH edge_condition DASH GREATERTHAN','labeled_edge',4,'p_labeled_edge','cypher_parser.py',303),
+  ('labeled_edge -> LESSTHAN DASH edge_condition DASH','labeled_edge',4,'p_labeled_edge','cypher_parser.py',304),
+  ('literals -> node_clause','literals',1,'p_literals','cypher_parser.py',316),
+  ('literals -> literals COMMA literals','literals',3,'p_literals','cypher_parser.py',317),
+  ('literals -> literals RIGHT_ARROW literals','literals',3,'p_literals','cypher_parser.py',318),
+  ('literals -> literals LEFT_ARROW literals','literals',3,'p_literals','cypher_parser.py',319),
+  ('literals -> literals labeled_edge literals','literals',3,'p_literals','cypher_parser.py',320),
+  ('match_where -> MATCH literals','match_where',2,'p_match_where','cypher_parser.py',359),
+  ('match_where -> MATCH literals where_clause','match_where',3,'p_match_where','cypher_parser.py',360),
+  ('create_clause -> CREATE literals','create_clause',2,'p_create','cypher_parser.py',370),
+  ('full_query -> match_where return_variables','full_query',2,'p_full_query','cypher_parser.py',375),
+  ('full_query -> create_clause','full_query',1,'p_full_query','cypher_parser.py',376),
+  ('full_query -> create_clause return_variables','full_query',2,'p_full_query','cypher_parser.py',377),
+  ('return_variables -> RETURN KEY','return_variables',2,'p_return_variables','cypher_parser.py',384),
+  ('return_variables -> RETURN keypath','return_variables',2,'p_return_variables','cypher_parser.py',385),
+  ('return_variables -> return_variables COMMA KEY','return_variables',3,'p_return_variables','cypher_parser.py',386),
+  ('return_variables -> return_variables COMMA keypath','return_variables',3,'p_return_variables','cypher_parser.py',387),
 ]

@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
-
+from .debugger import *
 import ply.lex as lex
+
+tokenizer_debugger_instance = Debug(name='cypher_tokenizer')
+debug = tokenizer_debugger_instance.debug
 # Test
 
 tokens = (
@@ -61,7 +64,7 @@ t_ignore = r' '
 
 
 def t_error(t):
-    print ('tokenizer error')
+    debug('tokenizer error')
 
 
 def t_MATCH(t):
@@ -105,12 +108,12 @@ def t_DOT(t):
 
 
 def t_NAME(t):
-    r'[A-Z]+[a-z0-9]*'
+    r'[A-Z_]+[a-z0-9_]*'
     return t
 
 
 def t_KEY(t):
-    r'[A-Za-z]+[0-9]*'
+    r'[A-Za-z_]+[0-9]*'
     return t
 
 
@@ -126,7 +129,7 @@ def t_FLOAT(t):
 
 
 def t_STRING(t):
-    r'"[A-Za-z0-9]+"'
+    r'"[A-Za-z0-9_]+"'
     t.value = t.value.replace('"', '')
     return t
 

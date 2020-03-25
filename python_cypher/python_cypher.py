@@ -12,6 +12,7 @@ import random
 import time
 from .cypher_tokenizer import *
 from .cypher_parser import *
+from .debugger import *
 
 PRINT_TOKENS = False #True
 PRINT_MATCHING_ASSIGNMENTS = False
@@ -34,25 +35,55 @@ def designations_from_atomic_facts(atomic_facts):
 class CypherParserBaseClass(object):
     """The base class that specific parsers will inherit from. Certain methods
        must be defined in the child class. See the docs."""
-    def __init__(self):
+    def __init__(self, debug_enabled=True, default_debug_level = 'WARN'):
+        self.debug_instance = Debug(name='CypherParserBaseClass')
+        # self.debug_instance.set_debug_level(default_debug_level)
+        # self.debug_instance.toggle_debug(force_state=debug_enabled)
         self.tokenizer = cypher_tokenizer
         self.parser = cypher_parser
+        self.debug = self.debug_instance.debug
+
+        ## Preparing debugger in ast modules
+        # parser_debugger_instance.set_debug_level(default_debug_level)
+        # parser_debugger_instance.toggle_debug(force_state=debug_enabled)
+        # tokenizer_debugger_instance.set_debug_level(default_debug_level)
+        # tokenizer_debugger_instance.toggle_debug(force_state=debug_enabled)
+    
+    # def set_debug_enabled(self, enabled):
+    #     self.debug_instance.toggle_debug(force_state=enabled)
+    #     ## ast modules
+    #     parser_debugger_instance.toggle_debug(force_state=enabled)
+    #     tokenizer_debugger_instance.toggle_debug(force_state=enabled)
+
+    # def set_debug_level(self, level):
+    #     self.debug_instance.set_debug_level(level)
+    #     ## ast modules
+    #     parser_debugger_instance.set_debug_level(level)
+    #     tokenizer_debugger_instance.set_debug_level(level)
+
 
     def yield_var_to_element(self, parsed_query, graph_object):
         all_designations = set()
         # Track down atomic_facts from outer scope.
         atomic_facts = extract_atomic_facts(parsed_query)
+        self.debug('######################## yield_var_to_element ##########################')
         for fact in atomic_facts:
+            self.debug('fact')
+            self.debug(fact.__dict__)
             if hasattr(fact, 'designation') and fact.designation is not None:
                 all_designations.add(fact.designation)
             elif hasattr(fact, 'literals'):
                 for literal in fact.literals.literal_list:
+                    self.debug('literal')
+                    self.debug(literal.__dict__)
                     if (hasattr(literal, 'designation') and
                             literal.designation is not None):
                         all_designations.add(literal.designation)
         all_designations = sorted(list(all_designations))
-
+        self.debug(all_designations)
         domain = self._get_domain(graph_object)
+        self.debug('#### yield_var_to_element ####')
+        self.debug(domain)
         for domain_assignment in itertools.product(
                 *[domain] * len(all_designations)):
             var_to_element = {all_designations[index]: element for index,
@@ -65,7 +96,7 @@ class CypherParserBaseClass(object):
         tok = self.tokenizer.token()
         while tok:
             if PRINT_TOKENS:
-                print (tok)
+                self.debug(tok)
             tok = self.tokenizer.token()
         return self.parser.parse(query)
 
@@ -105,6 +136,8 @@ class CypherParserBaseClass(object):
         def _test_match_where(clause, assignment, graph_object):
             sentinal = True  # Satisfied unless we fail
             for literal in clause.literals.literal_list:
+                self.debug('_test_match_where literal')
+                self.debug(literal.__dict__)
                 designation = literal.designation
                 desired_class = literal.node_class
                 desired_document = literal.attribute_conditions
@@ -123,25 +156,30 @@ class CypherParserBaseClass(object):
                 if not not literal.connecting_edges:  # not not -> empty?
                     edge_sentinal = True
                     for edge in literal.connecting_edges:
+                        self.debug('_test_match_where edge')
+                        self.debug(edge.__dict__)
                         edge_sentinal = False
                         source_designation = edge.node_1
                         target_designation = edge.node_2
-                        edge_label = edge.edge_label
+                        edge_label = edge.edge_label 
+                        attributes = edge.attribute_conditions
                         source_node = assignment[source_designation]
                         target_node = assignment[target_designation]
                         for one_edge_id in self._edges_connecting_nodes(
                                 graph_object, source_node, target_node):
-                            print (f"xxxxxxxxxxxxxxx> {edge_label} {one_edge_id}")
+                            self.debug(f"xxxxxxxxxxxxxxx> {edge_label} {one_edge_id}")
 
                             one_edge = self._get_edge_from_id(
                                 graph_object, one_edge_id)
                             
-                            print (f"yyyyyyyyyyyyyyy> {edge_label} {one_edge}")
+                            self.debug(f"yyyyyyyyyyyyyyy> {edge_label} {one_edge}")
                             if (edge_label is None or
                                     self._edge_class(one_edge) == edge_label):
-                                edge_sentinal = True
-                                if getattr(edge, 'designation', None) is not None:
-                                    assignment[edge.designation] = one_edge_id
+                                if self._edge_compare_attributes(one_edge, attributes):
+                                    edge_sentinal = True
+                                    if getattr(edge, 'designation', None) is not None:
+                                        assignment[edge.designation] = one_edge[2]['_id']
+                                        # assignment[edge.designation] = one_edge_id
                     sentinal = sentinal and edge_sentinal
             # Check the WHERE claused
             # Note this isn't in the previous loop, because the WHERE clause
@@ -166,13 +204,18 @@ class CypherParserBaseClass(object):
             # each assignment, we step through each "clause" (need better name)
             for assignment in self.yield_var_to_element(
                     parsed_query, graph_object):
+                self.debug('########### python_cypher.query #############')
+                self.debug(assignment)
                 satisfied = True
                 for clause in parsed_query.clause_list:
                     if not satisfied:
                         break
                     if isinstance(clause, MatchWhere):  # MATCH... WHERE...
+                        self.debug('########### python_cypher.query MatchWhere #############')
+                        self.debug(assignment)
                         satisfied = satisfied and _test_match_where(
                             clause, assignment, graph_object)
+                        self.debug(assignment)
                     elif isinstance(clause, ReturnVariables):
                         # We've added any edges to the assignment dictionary
                         # Now we need to step through the keypath lists that
@@ -180,15 +223,21 @@ class CypherParserBaseClass(object):
                         # attribute "variable_list"
                         return_values = []
                         for variable_path in clause.variable_list:
+                            self.debug('########### python_cypher.query ReturnVar #############')
+                            self.debug(assignment)
+                            self.debug(assignment[variable_path[0]])
+                            self.debug(variable_path)
                             # I expect this will choke on edges if we ask for
                             # their properties to be returned
                             if not isinstance(variable_path, list):
                                 variable_path = [variable_path]
                             if self._is_edge(
                                     graph_object, assignment[variable_path[0]]):
+                                self.debug('############### _is_edge is True ##############')
                                 _get_node_or_edge = self._get_edge
                             elif self._is_node(
                                     graph_object, assignment[variable_path[0]]):
+                                self.debug('############### _is_node is True ##############')
                                 _get_node_or_edge = self._get_node
                             else:
                                 raise Exception("Neither a node nor an edge.")
@@ -221,8 +270,10 @@ class CypherParserBaseClass(object):
             source_node = designation_to_node[edge_fact.node_1]
             target_node = designation_to_node[edge_fact.node_2]
             edge_label = edge_fact.edge_label
+            attribute_conditions = edge_fact.attribute_conditions
             new_edge_id = self._create_edge(graph_object, source_node,
-                                            target_node, edge_label=edge_label)
+                                            target_node, edge_label=edge_label, 
+                                            attribute_conditions=attribute_conditions)
             # Need an attribute for an edge designation
             designation_to_edge['placeholder'] = new_edge_id
 
@@ -295,8 +346,17 @@ class CypherToNetworkx(CypherParserBaseClass):
         return node_name in graph_object.node
 
     def _is_edge(self, graph_object, edge_name):
-#TODO        for source_node_id, connections_dict in graph_object.edge.iteritems():
-        for source_node_id, d, connections_dict in graph_object.edges.data():
+        self.debug('########### python_cypher._is_edge #############')
+        self.debug(edge_name)
+        self.debug('Nodes')
+        self.debug([i for i in graph_object.nodes(data=True)])
+        self.debug('Edges')
+        self.debug([i for i in graph_object.edges(data=True)])
+        for source_node_id, d, connections_dict in graph_object.edges(data=True):
+            self.debug('''{}
+            {}
+            {}
+            '''.format(source_node_id, d, connections_dict))
             for _, edges_dict in connections_dict.items (): #iteritems():
                 if edges_dict == edge_name:
                     return True
@@ -312,11 +372,13 @@ class CypherToNetworkx(CypherParserBaseClass):
 
     def _get_edge(self, graph_object, edge_name):
 #        for source_node_id, connections_dict in graph_object.edge.iteritems():
-        for source_node_id, connections_dict in graph_object.edges():
-            for _, edges_dict in connections_dict.iteritems():
-                for _, edge_dict in edges_dict.iteritems():
-                    if edge_dict.get('_id', None) == edge_name:
-                        return edge_dict
+        for source_node_id, target_node_id, edge_dict in graph_object.edges(data=True):
+            if edge_dict.get('_id', None) == edge_name:
+                return edge_dict
+            # for _, edges_dict in connections_dict.iteritems():
+            #     for _, edge_dict in edges_dict.iteritems():
+            #         if edge_dict.get('_id', None) == edge_name:
+            #             return edge_dict
 
     def _node_attribute_value(self, node, attribute_list):
         out = copy.deepcopy(node)
@@ -347,15 +409,15 @@ class CypherToNetworkx(CypherParserBaseClass):
 
     def _get_edge_from_id(self, graph_object, edge_id):
         for source, target_id, data in graph_object.edges(data=True):
-            #print (f">>>> {source} {target_id} {edge_id} match:{edge_id==target_id}")
+            #self.debug(f">>>> {source} {target_id} {edge_id} match:{edge_id==target_id}")
             if target_id == edge_id:
                 return (source, target_id, data)
         #TODO
         '''
         for source, target_dict in graph_object.edge.iteritems():
-            print (f"--- {target_dict}")
+            self.debug(f"--- {target_dict}")
             for target, edge_dict in target_dict.items (): #iteritems():
-                print (f"--- {target} {edge_dict}")
+                self.debug(f"--- {target} {edge_dict}")
                 for index, one_edge in edge_dict.iteritems():
                     if one_edge['_id'] == edge_id:
                         return one_edge
@@ -364,11 +426,11 @@ class CypherToNetworkx(CypherParserBaseClass):
         try:
             #TODO            for index, data in graph_object.edge[source].get(
             #                    target, {}).iteritems():
-#            print (f"----------- {source}")
-#            print (f"----------- {graph_object.edges([source])}")
+            self.debug(f"----------- {source}")
+            self.debug(f"----------- {target}")
 
             for index, e, data in graph_object.edges([source], data=True): #.get(target, {}).items():
-                print (f"..............>>> {index} {e} {data}")
+                self.debug(f"..............>>> {index} {e} {data}")
                 yield e #data #['_id']
         except:
             raise Exception("Error getting edges connecting nodes.")
@@ -378,12 +440,26 @@ class CypherToNetworkx(CypherParserBaseClass):
 
     def _edge_class(self, edge, class_key='edge_label'):
         try:
-            print (f"----ec------> {edge}")
+            self.debug(f"----ec------> {edge}")
             out = edge[2].get(class_key, None)
-            print (f"----ec2------> {edge} {out}")
+            self.debug(f"----ec2------> {edge} {out}")
         except AttributeError:
             out = None
         return out
+
+    def _edge_compare_attributes(self, edge, attributes):
+        for attr_key in attributes.keys():
+            attr = attributes[attr_key]
+            try:
+                self.debug(f"----ec------> {edge}")
+                out = edge[2].get(attr_key, None)
+                self.debug(f"----ec2------> {edge} {out}")
+                if out != attr:
+                    return False
+            except AttributeError as e:
+                self.debug('Error in comparation: {}'.format(e))
+                return False
+        return True
 
     def _create_node(self, graph_object, node_class, **attribute_conditions):
         """Create a node and return it so it can be referred to later."""
@@ -393,11 +469,17 @@ class CypherToNetworkx(CypherParserBaseClass):
         return new_id
 
     def _create_edge(self, graph_object, source_node,
-                     target_node, edge_label=None):
+                     target_node, edge_label=None,
+                     attribute_conditions=None):
         new_edge_id = unique_id()
+        attr = attribute_conditions if attribute_conditions is not None else {}
+        self.debug('############### _create_edge_ ##########################')
+        self.debug(attr)
+        attr['edge_label'] = edge_label
+        attr['_id'] = new_edge_id
         graph_object.add_edge(
             source_node, target_node,
-            **{'edge_label': edge_label, '_id': new_edge_id})
+            **attr)
         return new_edge_id
 
 
@@ -486,30 +568,30 @@ def extract_atomic_facts(query):
     return _recurse.atomic_facts
 
 
-def main():
-    # sample = ','.join(['MATCH (x:SOMECLASS {bar : "baz"',
-    #                    'foo:"goo"})<-[:WHATEVER]-(:ANOTHERCLASS)',
-    #                    '(y:LASTCLASS) RETURN x.foo, y'])
+# def main():
+#     # sample = ','.join(['MATCH (x:SOMECLASS {bar : "baz"',
+#     #                    'foo:"goo"})<-[:WHATEVER]-(:ANOTHERCLASS)',
+#     #                    '(y:LASTCLASS) RETURN x.foo, y'])
 
-    # create = ('CREATE (n:SOMECLASS {foo: "bar", bar: {qux: "baz"}})'
-    #           '-[e:EDGECLASS]->(m:ANOTHERCLASS) RETURN n')
-    # create = 'CREATE (n:SOMECLASS {foo: "bar", qux: "baz"}) RETURN n'
-    create_query = ('CREATE (n:SOMECLASS {foo: {goo: "bar"}})'
-            '-[e:EDGECLASS]->(m:ANOTHERCLASS {qux: "foobar", bar: 10}) '
-                    'RETURN n')
-    test_query = ('MATCH (n:SOMECLASS {foo: {goo: "bar"}})-[e:EDGECLASS]->'
-                  '(m:ANOTHERCLASS) WHERE '
-                  'm.bar = 10 '
-                  'RETURN n.foo.goo, m.qux, e')
-    # atomic_facts = extract_atomic_facts(test_query)
-    graph_object = nx.MultiDiGraph()
-    my_parser = CypherToNetworkx()
-    for i in my_parser.query(graph_object, create_query):
-        pass  # a generator, we need to loop over results to run.
-    for i in my_parser.query(graph_object, test_query):
-        print (i)
+#     # create = ('CREATE (n:SOMECLASS {foo: "bar", bar: {qux: "baz"}})'
+#     #           '-[e:EDGECLASS]->(m:ANOTHERCLASS) RETURN n')
+#     # create = 'CREATE (n:SOMECLASS {foo: "bar", qux: "baz"}) RETURN n'
+#     create_query = ('CREATE (n:SOMECLASS {foo: {goo: "bar"}})'
+#             '-[e:EDGECLASS]->(m:ANOTHERCLASS {qux: "foobar", bar: 10}) '
+#                     'RETURN n')
+#     test_query = ('MATCH (n:SOMECLASS {foo: {goo: "bar"}})-[e:EDGECLASS]->'
+#                   '(m:ANOTHERCLASS) WHERE '
+#                   'm.bar = 10 '
+#                   'RETURN n.foo.goo, m.qux, e')
+#     # atomic_facts = extract_atomic_facts(test_query)
+#     graph_object = nx.MultiDiGraph()
+#     my_parser = CypherToNetworkx()
+#     for i in my_parser.query(graph_object, create_query):
+#         pass  # a generator, we need to loop over results to run.
+#     for i in my_parser.query(graph_object, test_query):
+#         self.debug(i)
 
 
-if __name__ == '__main__':
-    # This main method is just for testing
-    main()
+# if __name__ == '__main__':
+#     # This main method is just for testing
+#     main()

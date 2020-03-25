@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from .cypher_tokenizer import *
+from .debugger import *
 from ply import yacc
+
+parser_debugger_instance = Debug(name='cypher_parser')
+debug = parser_debugger_instance.debug
 
 next_anonymous_variable = 0
 
@@ -46,7 +50,7 @@ def constraint_function(function_string):
 class ParsingException(Exception):
     """A generic Exception class for the parser."""
     def __init__(self, msg):
-        print (msg)
+        debug(msg)
 
 
 class AtomicFact(object):
@@ -64,19 +68,24 @@ class ClassIs(AtomicFact):
 class EdgeCondition(AtomicFact):
     """Represents the constraint that an edge must have a specific
        label, or that it must be run in a specific direction."""
-    def __init__(self, edge_label=None, direction=None, designation=None):
+    def __init__(self, edge_label=None, direction=None, designation=None, attribute_conditions=None):
+        debug('####################### EdgeCondition ########################')
         self.edge_label = edge_label
         self.designation = designation
+        self.attribute_conditions = attribute_conditions or {}
 
 
 class EdgeExists(AtomicFact):
     """The constraint that an edge exists between two nodes, possibly
        having a specific label."""
-    def __init__(self, node_1, node_2, designation=None, edge_label=None):
+    def __init__(self, node_1, node_2, designation=None, edge_label=None, attribute_conditions=None):
+        debug('####################### EdgeExist ########################')
+        debug(attribute_conditions)
         self.node_1 = node_1
         self.node_2 = node_2
         self.edge_label = edge_label
         self.designation = designation
+        self.attribute_conditions = attribute_conditions or {}
 
 
 class Node(object):
@@ -208,6 +217,7 @@ def p_condition(p):
                       | condition_list COMMA condition_list
                       | LCURLEY condition_list RCURLEY
                       | KEY COLON condition_list'''
+    
     if len(p) == 4 and p[2] == ':' and isinstance(p[3], str):
         p[0] = {p[1]: p[3].replace('"', '')}
     elif len(p) == 4 and p[2] == ':' and isinstance(p[3], int):
@@ -281,12 +291,31 @@ def p_keypath(p):
 
 def p_edge_condition(p):
     '''edge_condition : LBRACKET COLON NAME RBRACKET
-                      | LBRACKET KEY COLON NAME RBRACKET'''
+                      | LBRACKET COLON NAME condition_list RBRACKET
+                      | LBRACKET KEY COLON NAME RBRACKET
+                      | LBRACKET KEY COLON NAME condition_list RBRACKET'''
+    debug([e for e in p])
     if p[2] == t_COLON:
-        p[0] = EdgeCondition(edge_label=p[3])
-    elif p[3] == t_COLON and len(p) == 6:
-        p[0] = EdgeCondition(edge_label=p[4], designation=p[2])
-        pass
+        debug('############# p_edge_condition ####################')
+        debug('p[2] == t_COLON')
+        if len(p) == 6:
+            debug('############# p_edge_condition ####################')
+            debug('len(p) == 6')
+            p[0] = EdgeCondition(edge_label=p[3], attribute_conditions=p[4])
+        else:
+            p[0] = EdgeCondition(edge_label=p[3])
+    elif p[3] == t_COLON:
+        debug('############# p_edge_condition ####################')
+        debug('p[3] == t_COLON')
+        if len(p) == 6:
+            debug('len(p) == 6')
+            p[0] = EdgeCondition(edge_label=p[4], designation=p[2])
+        elif len(p) == 7:
+            debug('############# p_edge_condition ####################')
+            debug('len(p) == 7')
+            p[0] = EdgeCondition(edge_label=p[4], designation=p[2], attribute_conditions=p[5])
+        else:
+            raise Exception("Unhandled case in p_edge_condition")
     else:
         raise Exception("Unhandled case in p_edge_condition")
 
@@ -332,7 +361,8 @@ def p_literals(p):
         edge_fact = EdgeExists(p[1].literal_list[-1].designation,
                                p[3].literal_list[0].designation,
                                edge_label=p[2].edge_label,
-                               designation=p[2].designation)
+                               designation=p[2].designation,
+                               attribute_conditions=p[2].attribute_conditions)
         p[0].literal_list[-1].connecting_edges.append(edge_fact)
         p[0].literal_list += p[3].literal_list
     elif isinstance(p[2], EdgeCondition) and p[2].direction == 'right_left':
@@ -340,7 +370,8 @@ def p_literals(p):
         edge_fact = EdgeExists(p[3].literal_list[0].designation,
                                p[1].literal_list[-1].designation,
                                edge_label=p[2].edge_label,
-                               designation=p[2].designation)
+                               designation=p[2].designation,
+                               attribute_conditions=p[2].attribute_conditions)
         p[0].literal_list[-1].connecting_edges.append(edge_fact)
         p[0].literal_list += p[3].literal_list
     else:
@@ -386,7 +417,8 @@ def p_return_variables(p):
 
 def p_error(p):
 #    import pdb; pdb.set_trace()
+    debug(p)
     raise ParsingException("Generic error while parsing.")
 
 
-cypher_parser = yacc.yacc()
+cypher_parser = yacc.yacc(debug=True)
