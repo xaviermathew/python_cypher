@@ -129,7 +129,7 @@ def t_FLOAT(t):
 
 
 def t_STRING(t):
-    r'"[A-Za-z0-9_]+"'
+    r'"[A-Za-z0-9_\.]+"'
     t.value = t.value.replace('"', '')
     return t
 
