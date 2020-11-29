@@ -2,3 +2,5 @@ env
 dist
 __pycache__
 .vscode
+.idea
+PythonCypher.egg-info

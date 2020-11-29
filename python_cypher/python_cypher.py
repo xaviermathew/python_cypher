@@ -141,14 +141,14 @@ class CypherParserBaseClass(object):
                 designation = literal.designation
                 desired_class = literal.node_class
                 desired_document = literal.attribute_conditions
-                node = graph_object.node[assignment[designation]]
+                node = graph_object._node[assignment[designation]]
                 # Check the class of the node
                 if (desired_class is not None and
                         node.get('class', None) != desired_class):
                     sentinal = False
                 node_document = copy.deepcopy(node)
                 # The `node_document` is a temporary copy for comparisons
-                del node_document['class']
+                node_document.pop('class', None)
                 if sentinal and (len(desired_document) > 0 and
                                  node_document != desired_document):
                     sentinal = False
@@ -343,7 +343,7 @@ class CypherToNetworkx(CypherParserBaseClass):
         return obj.nodes()
 
     def _is_node(self, graph_object, node_name):
-        return node_name in graph_object.node
+        return node_name in graph_object._node
 
     def _is_edge(self, graph_object, edge_name):
         self.debug('########### python_cypher._is_edge #############')
@@ -368,7 +368,8 @@ class CypherToNetworkx(CypherParserBaseClass):
         return False
 
     def _get_node(self, graph_object, node_name):
-        return graph_object.node[node_name]
+        return node_name
+        # return graph_object._node[node_name]
 
     def _get_edge(self, graph_object, edge_name):
 #        for source_node_id, connections_dict in graph_object.edge.iteritems():

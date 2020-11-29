@@ -32,57 +32,58 @@ Rule 21    constraint -> LPAREN constraint RPAREN
 Rule 22    where_clause -> WHERE constraint
 Rule 23    keypath -> KEY DOT KEY
 Rule 24    keypath -> keypath DOT KEY
-Rule 25    edge_condition -> LBRACKET COLON NAME RBRACKET
-Rule 26    edge_condition -> LBRACKET COLON NAME condition_list RBRACKET
-Rule 27    edge_condition -> LBRACKET KEY COLON NAME RBRACKET
-Rule 28    edge_condition -> LBRACKET KEY COLON NAME condition_list RBRACKET
-Rule 29    labeled_edge -> DASH edge_condition DASH GREATERTHAN
-Rule 30    labeled_edge -> LESSTHAN DASH edge_condition DASH
-Rule 31    literals -> node_clause
-Rule 32    literals -> literals COMMA literals
-Rule 33    literals -> literals RIGHT_ARROW literals
-Rule 34    literals -> literals LEFT_ARROW literals
-Rule 35    literals -> literals labeled_edge literals
-Rule 36    match_where -> MATCH literals
-Rule 37    match_where -> MATCH literals where_clause
-Rule 38    create_clause -> CREATE literals
-Rule 39    full_query -> match_where return_variables
-Rule 40    full_query -> create_clause
-Rule 41    full_query -> create_clause return_variables
-Rule 42    return_variables -> RETURN KEY
-Rule 43    return_variables -> RETURN keypath
-Rule 44    return_variables -> return_variables COMMA KEY
-Rule 45    return_variables -> return_variables COMMA keypath
+Rule 25    edge_condition -> LBRACKET RBRACKET
+Rule 26    edge_condition -> LBRACKET COLON NAME RBRACKET
+Rule 27    edge_condition -> LBRACKET COLON NAME condition_list RBRACKET
+Rule 28    edge_condition -> LBRACKET KEY COLON NAME RBRACKET
+Rule 29    edge_condition -> LBRACKET KEY COLON NAME condition_list RBRACKET
+Rule 30    labeled_edge -> DASH edge_condition DASH GREATERTHAN
+Rule 31    labeled_edge -> LESSTHAN DASH edge_condition DASH
+Rule 32    literals -> node_clause
+Rule 33    literals -> literals COMMA literals
+Rule 34    literals -> literals RIGHT_ARROW literals
+Rule 35    literals -> literals LEFT_ARROW literals
+Rule 36    literals -> literals labeled_edge literals
+Rule 37    match_where -> MATCH literals
+Rule 38    match_where -> MATCH literals where_clause
+Rule 39    create_clause -> CREATE literals
+Rule 40    full_query -> match_where return_variables
+Rule 41    full_query -> create_clause
+Rule 42    full_query -> create_clause return_variables
+Rule 43    return_variables -> RETURN KEY
+Rule 44    return_variables -> RETURN keypath
+Rule 45    return_variables -> return_variables COMMA KEY
+Rule 46    return_variables -> return_variables COMMA keypath
 
 Terminals, with rules where they appear
 
 AND                  : 19
-COLON                : 2 3 4 5 6 9 25 26 27 28
-COMMA                : 7 32 44 45
-CREATE               : 38
-DASH                 : 29 29 30 30
+COLON                : 2 3 4 5 6 9 26 27 28 29
+COMMA                : 7 33 45 46
+CREATE               : 39
+DASH                 : 30 30 31 31
 DOT                  : 23 24
 EQUALS               : 10 11 12
-GREATERTHAN          : 14 29
+GREATERTHAN          : 14 30
 GREATERTHAN_OR_EQUAL : 15
 INTEGER              : 6 11 13 14 15 16 17
-KEY                  : 1 3 4 5 6 9 23 23 24 27 28 42 44
-LBRACKET             : 25 26 27 28
+KEY                  : 1 3 4 5 6 9 23 23 24 28 29 43 45
+LBRACKET             : 25 26 27 28 29
 LCURLEY              : 8
-LEFT_ARROW           : 34
-LESSTHAN             : 16 30
+LEFT_ARROW           : 35
+LESSTHAN             : 16 31
 LESSTHAN_OR_EQUAL    : 17
 LPAREN               : 1 2 3 4 21
-MATCH                : 36 37
-NAME                 : 2 3 4 25 26 27 28
+MATCH                : 37 38
+NAME                 : 2 3 4 26 27 28 29
 NOT                  : 20
 NOT_EQUAL            : 13
 OR                   : 18
 QUOTE                : 
-RBRACKET             : 25 26 27 28
+RBRACKET             : 25 26 27 28 29
 RCURLEY              : 8
-RETURN               : 42 43
-RIGHT_ARROW          : 33
+RETURN               : 43 44
+RIGHT_ARROW          : 34
 RPAREN               : 1 2 3 4 21
 STRING               : 5 10
 WHERE                : 22
@@ -91,30 +92,30 @@ error                :
 
 Nonterminals, with rules where they appear
 
-condition_list       : 4 7 7 8 9 26 28
+condition_list       : 4 7 7 8 9 27 29
 constraint           : 18 18 19 19 20 21 22
-create_clause        : 40 41
-edge_condition       : 29 30
+create_clause        : 41 42
+edge_condition       : 30 31
 full_query           : 0
-keypath              : 10 11 12 12 13 14 15 16 17 24 43 45
-labeled_edge         : 35
-literals             : 32 32 33 33 34 34 35 35 36 37 38
-match_where          : 39
-node_clause          : 31
-return_variables     : 39 41 44 45
-where_clause         : 37
+keypath              : 10 11 12 12 13 14 15 16 17 24 44 46
+labeled_edge         : 36
+literals             : 33 33 34 34 35 35 36 36 37 38 39
+match_where          : 40
+node_clause          : 32
+return_variables     : 40 42 45 46
+where_clause         : 38
 
 Parsing method: LALR
 
 state 0
 
     (0) S' -> . full_query
-    (39) full_query -> . match_where return_variables
-    (40) full_query -> . create_clause
-    (41) full_query -> . create_clause return_variables
-    (36) match_where -> . MATCH literals
-    (37) match_where -> . MATCH literals where_clause
-    (38) create_clause -> . CREATE literals
+    (40) full_query -> . match_where return_variables
+    (41) full_query -> . create_clause
+    (42) full_query -> . create_clause return_variables
+    (37) match_where -> . MATCH literals
+    (38) match_where -> . MATCH literals where_clause
+    (39) create_clause -> . CREATE literals
 
     MATCH           shift and go to state 4
     CREATE          shift and go to state 5
@@ -131,11 +132,11 @@ state 1
 
 state 2
 
-    (39) full_query -> match_where . return_variables
-    (42) return_variables -> . RETURN KEY
-    (43) return_variables -> . RETURN keypath
-    (44) return_variables -> . return_variables COMMA KEY
-    (45) return_variables -> . return_variables COMMA keypath
+    (40) full_query -> match_where . return_variables
+    (43) return_variables -> . RETURN KEY
+    (44) return_variables -> . RETURN keypath
+    (45) return_variables -> . return_variables COMMA KEY
+    (46) return_variables -> . return_variables COMMA keypath
 
     RETURN          shift and go to state 7
 
@@ -143,27 +144,27 @@ state 2
 
 state 3
 
-    (40) full_query -> create_clause .
-    (41) full_query -> create_clause . return_variables
-    (42) return_variables -> . RETURN KEY
-    (43) return_variables -> . RETURN keypath
-    (44) return_variables -> . return_variables COMMA KEY
-    (45) return_variables -> . return_variables COMMA keypath
+    (41) full_query -> create_clause .
+    (42) full_query -> create_clause . return_variables
+    (43) return_variables -> . RETURN KEY
+    (44) return_variables -> . RETURN keypath
+    (45) return_variables -> . return_variables COMMA KEY
+    (46) return_variables -> . return_variables COMMA keypath
 
-    $end            reduce using rule 40 (full_query -> create_clause .)
+    $end            reduce using rule 41 (full_query -> create_clause .)
     RETURN          shift and go to state 7
 
     return_variables               shift and go to state 8
 
 state 4
 
-    (36) match_where -> MATCH . literals
-    (37) match_where -> MATCH . literals where_clause
-    (31) literals -> . node_clause
-    (32) literals -> . literals COMMA literals
-    (33) literals -> . literals RIGHT_ARROW literals
-    (34) literals -> . literals LEFT_ARROW literals
-    (35) literals -> . literals labeled_edge literals
+    (37) match_where -> MATCH . literals
+    (38) match_where -> MATCH . literals where_clause
+    (32) literals -> . node_clause
+    (33) literals -> . literals COMMA literals
+    (34) literals -> . literals RIGHT_ARROW literals
+    (35) literals -> . literals LEFT_ARROW literals
+    (36) literals -> . literals labeled_edge literals
     (1) node_clause -> . LPAREN KEY RPAREN
     (2) node_clause -> . LPAREN COLON NAME RPAREN
     (3) node_clause -> . LPAREN KEY COLON NAME RPAREN
@@ -176,12 +177,12 @@ state 4
 
 state 5
 
-    (38) create_clause -> CREATE . literals
-    (31) literals -> . node_clause
-    (32) literals -> . literals COMMA literals
-    (33) literals -> . literals RIGHT_ARROW literals
-    (34) literals -> . literals LEFT_ARROW literals
-    (35) literals -> . literals labeled_edge literals
+    (39) create_clause -> CREATE . literals
+    (32) literals -> . node_clause
+    (33) literals -> . literals COMMA literals
+    (34) literals -> . literals RIGHT_ARROW literals
+    (35) literals -> . literals LEFT_ARROW literals
+    (36) literals -> . literals labeled_edge literals
     (1) node_clause -> . LPAREN KEY RPAREN
     (2) node_clause -> . LPAREN COLON NAME RPAREN
     (3) node_clause -> . LPAREN KEY COLON NAME RPAREN
@@ -194,18 +195,18 @@ state 5
 
 state 6
 
-    (39) full_query -> match_where return_variables .
-    (44) return_variables -> return_variables . COMMA KEY
-    (45) return_variables -> return_variables . COMMA keypath
+    (40) full_query -> match_where return_variables .
+    (45) return_variables -> return_variables . COMMA KEY
+    (46) return_variables -> return_variables . COMMA keypath
 
-    $end            reduce using rule 39 (full_query -> match_where return_variables .)
+    $end            reduce using rule 40 (full_query -> match_where return_variables .)
     COMMA           shift and go to state 13
 
 
 state 7
 
-    (42) return_variables -> RETURN . KEY
-    (43) return_variables -> RETURN . keypath
+    (43) return_variables -> RETURN . KEY
+    (44) return_variables -> RETURN . keypath
     (23) keypath -> . KEY DOT KEY
     (24) keypath -> . keypath DOT KEY
 
@@ -215,27 +216,27 @@ state 7
 
 state 8
 
-    (41) full_query -> create_clause return_variables .
-    (44) return_variables -> return_variables . COMMA KEY
-    (45) return_variables -> return_variables . COMMA keypath
+    (42) full_query -> create_clause return_variables .
+    (45) return_variables -> return_variables . COMMA KEY
+    (46) return_variables -> return_variables . COMMA keypath
 
-    $end            reduce using rule 41 (full_query -> create_clause return_variables .)
+    $end            reduce using rule 42 (full_query -> create_clause return_variables .)
     COMMA           shift and go to state 13
 
 
 state 9
 
-    (36) match_where -> MATCH literals .
-    (37) match_where -> MATCH literals . where_clause
-    (32) literals -> literals . COMMA literals
-    (33) literals -> literals . RIGHT_ARROW literals
-    (34) literals -> literals . LEFT_ARROW literals
-    (35) literals -> literals . labeled_edge literals
+    (37) match_where -> MATCH literals .
+    (38) match_where -> MATCH literals . where_clause
+    (33) literals -> literals . COMMA literals
+    (34) literals -> literals . RIGHT_ARROW literals
+    (35) literals -> literals . LEFT_ARROW literals
+    (36) literals -> literals . labeled_edge literals
     (22) where_clause -> . WHERE constraint
-    (29) labeled_edge -> . DASH edge_condition DASH GREATERTHAN
-    (30) labeled_edge -> . LESSTHAN DASH edge_condition DASH
+    (30) labeled_edge -> . DASH edge_condition DASH GREATERTHAN
+    (31) labeled_edge -> . LESSTHAN DASH edge_condition DASH
 
-    RETURN          reduce using rule 36 (match_where -> MATCH literals .)
+    RETURN          reduce using rule 37 (match_where -> MATCH literals .)
     COMMA           shift and go to state 17
     RIGHT_ARROW     shift and go to state 18
     LEFT_ARROW      shift and go to state 19
@@ -248,16 +249,16 @@ state 9
 
 state 10
 
-    (31) literals -> node_clause .
+    (32) literals -> node_clause .
 
-    COMMA           reduce using rule 31 (literals -> node_clause .)
-    RIGHT_ARROW     reduce using rule 31 (literals -> node_clause .)
-    LEFT_ARROW      reduce using rule 31 (literals -> node_clause .)
-    WHERE           reduce using rule 31 (literals -> node_clause .)
-    DASH            reduce using rule 31 (literals -> node_clause .)
-    LESSTHAN        reduce using rule 31 (literals -> node_clause .)
-    RETURN          reduce using rule 31 (literals -> node_clause .)
-    $end            reduce using rule 31 (literals -> node_clause .)
+    COMMA           reduce using rule 32 (literals -> node_clause .)
+    RIGHT_ARROW     reduce using rule 32 (literals -> node_clause .)
+    LEFT_ARROW      reduce using rule 32 (literals -> node_clause .)
+    WHERE           reduce using rule 32 (literals -> node_clause .)
+    DASH            reduce using rule 32 (literals -> node_clause .)
+    LESSTHAN        reduce using rule 32 (literals -> node_clause .)
+    RETURN          reduce using rule 32 (literals -> node_clause .)
+    $end            reduce using rule 32 (literals -> node_clause .)
 
 
 state 11
@@ -273,16 +274,16 @@ state 11
 
 state 12
 
-    (38) create_clause -> CREATE literals .
-    (32) literals -> literals . COMMA literals
-    (33) literals -> literals . RIGHT_ARROW literals
-    (34) literals -> literals . LEFT_ARROW literals
-    (35) literals -> literals . labeled_edge literals
-    (29) labeled_edge -> . DASH edge_condition DASH GREATERTHAN
-    (30) labeled_edge -> . LESSTHAN DASH edge_condition DASH
+    (39) create_clause -> CREATE literals .
+    (33) literals -> literals . COMMA literals
+    (34) literals -> literals . RIGHT_ARROW literals
+    (35) literals -> literals . LEFT_ARROW literals
+    (36) literals -> literals . labeled_edge literals
+    (30) labeled_edge -> . DASH edge_condition DASH GREATERTHAN
+    (31) labeled_edge -> . LESSTHAN DASH edge_condition DASH
 
-    RETURN          reduce using rule 38 (create_clause -> CREATE literals .)
-    $end            reduce using rule 38 (create_clause -> CREATE literals .)
+    RETURN          reduce using rule 39 (create_clause -> CREATE literals .)
+    $end            reduce using rule 39 (create_clause -> CREATE literals .)
     COMMA           shift and go to state 17
     RIGHT_ARROW     shift and go to state 18
     LEFT_ARROW      shift and go to state 19
@@ -293,8 +294,8 @@ state 12
 
 state 13
 
-    (44) return_variables -> return_variables COMMA . KEY
-    (45) return_variables -> return_variables COMMA . keypath
+    (45) return_variables -> return_variables COMMA . KEY
+    (46) return_variables -> return_variables COMMA . keypath
     (23) keypath -> . KEY DOT KEY
     (24) keypath -> . keypath DOT KEY
 
@@ -304,39 +305,39 @@ state 13
 
 state 14
 
-    (42) return_variables -> RETURN KEY .
+    (43) return_variables -> RETURN KEY .
     (23) keypath -> KEY . DOT KEY
 
-    COMMA           reduce using rule 42 (return_variables -> RETURN KEY .)
-    $end            reduce using rule 42 (return_variables -> RETURN KEY .)
+    COMMA           reduce using rule 43 (return_variables -> RETURN KEY .)
+    $end            reduce using rule 43 (return_variables -> RETURN KEY .)
     DOT             shift and go to state 28
 
 
 state 15
 
-    (43) return_variables -> RETURN keypath .
+    (44) return_variables -> RETURN keypath .
     (24) keypath -> keypath . DOT KEY
 
-    COMMA           reduce using rule 43 (return_variables -> RETURN keypath .)
-    $end            reduce using rule 43 (return_variables -> RETURN keypath .)
+    COMMA           reduce using rule 44 (return_variables -> RETURN keypath .)
+    $end            reduce using rule 44 (return_variables -> RETURN keypath .)
     DOT             shift and go to state 29
 
 
 state 16
 
-    (37) match_where -> MATCH literals where_clause .
+    (38) match_where -> MATCH literals where_clause .
 
-    RETURN          reduce using rule 37 (match_where -> MATCH literals where_clause .)
+    RETURN          reduce using rule 38 (match_where -> MATCH literals where_clause .)
 
 
 state 17
 
-    (32) literals -> literals COMMA . literals
-    (31) literals -> . node_clause
-    (32) literals -> . literals COMMA literals
-    (33) literals -> . literals RIGHT_ARROW literals
-    (34) literals -> . literals LEFT_ARROW literals
-    (35) literals -> . literals labeled_edge literals
+    (33) literals -> literals COMMA . literals
+    (32) literals -> . node_clause
+    (33) literals -> . literals COMMA literals
+    (34) literals -> . literals RIGHT_ARROW literals
+    (35) literals -> . literals LEFT_ARROW literals
+    (36) literals -> . literals labeled_edge literals
     (1) node_clause -> . LPAREN KEY RPAREN
     (2) node_clause -> . LPAREN COLON NAME RPAREN
     (3) node_clause -> . LPAREN KEY COLON NAME RPAREN
@@ -349,12 +350,12 @@ state 17
 
 state 18
 
-    (33) literals -> literals RIGHT_ARROW . literals
-    (31) literals -> . node_clause
-    (32) literals -> . literals COMMA literals
-    (33) literals -> . literals RIGHT_ARROW literals
-    (34) literals -> . literals LEFT_ARROW literals
-    (35) literals -> . literals labeled_edge literals
+    (34) literals -> literals RIGHT_ARROW . literals
+    (32) literals -> . node_clause
+    (33) literals -> . literals COMMA literals
+    (34) literals -> . literals RIGHT_ARROW literals
+    (35) literals -> . literals LEFT_ARROW literals
+    (36) literals -> . literals labeled_edge literals
     (1) node_clause -> . LPAREN KEY RPAREN
     (2) node_clause -> . LPAREN COLON NAME RPAREN
     (3) node_clause -> . LPAREN KEY COLON NAME RPAREN
@@ -367,12 +368,12 @@ state 18
 
 state 19
 
-    (34) literals -> literals LEFT_ARROW . literals
-    (31) literals -> . node_clause
-    (32) literals -> . literals COMMA literals
-    (33) literals -> . literals RIGHT_ARROW literals
-    (34) literals -> . literals LEFT_ARROW literals
-    (35) literals -> . literals labeled_edge literals
+    (35) literals -> literals LEFT_ARROW . literals
+    (32) literals -> . node_clause
+    (33) literals -> . literals COMMA literals
+    (34) literals -> . literals RIGHT_ARROW literals
+    (35) literals -> . literals LEFT_ARROW literals
+    (36) literals -> . literals labeled_edge literals
     (1) node_clause -> . LPAREN KEY RPAREN
     (2) node_clause -> . LPAREN COLON NAME RPAREN
     (3) node_clause -> . LPAREN KEY COLON NAME RPAREN
@@ -385,12 +386,12 @@ state 19
 
 state 20
 
-    (35) literals -> literals labeled_edge . literals
-    (31) literals -> . node_clause
-    (32) literals -> . literals COMMA literals
-    (33) literals -> . literals RIGHT_ARROW literals
-    (34) literals -> . literals LEFT_ARROW literals
-    (35) literals -> . literals labeled_edge literals
+    (36) literals -> literals labeled_edge . literals
+    (32) literals -> . node_clause
+    (33) literals -> . literals COMMA literals
+    (34) literals -> . literals RIGHT_ARROW literals
+    (35) literals -> . literals LEFT_ARROW literals
+    (36) literals -> . literals labeled_edge literals
     (1) node_clause -> . LPAREN KEY RPAREN
     (2) node_clause -> . LPAREN COLON NAME RPAREN
     (3) node_clause -> . LPAREN KEY COLON NAME RPAREN
@@ -428,11 +429,12 @@ state 21
 
 state 22
 
-    (29) labeled_edge -> DASH . edge_condition DASH GREATERTHAN
-    (25) edge_condition -> . LBRACKET COLON NAME RBRACKET
-    (26) edge_condition -> . LBRACKET COLON NAME condition_list RBRACKET
-    (27) edge_condition -> . LBRACKET KEY COLON NAME RBRACKET
-    (28) edge_condition -> . LBRACKET KEY COLON NAME condition_list RBRACKET
+    (30) labeled_edge -> DASH . edge_condition DASH GREATERTHAN
+    (25) edge_condition -> . LBRACKET RBRACKET
+    (26) edge_condition -> . LBRACKET COLON NAME RBRACKET
+    (27) edge_condition -> . LBRACKET COLON NAME condition_list RBRACKET
+    (28) edge_condition -> . LBRACKET KEY COLON NAME RBRACKET
+    (29) edge_condition -> . LBRACKET KEY COLON NAME condition_list RBRACKET
 
     LBRACKET        shift and go to state 40
 
@@ -440,7 +442,7 @@ state 22
 
 state 23
 
-    (30) labeled_edge -> LESSTHAN . DASH edge_condition DASH
+    (31) labeled_edge -> LESSTHAN . DASH edge_condition DASH
 
     DASH            shift and go to state 41
 
@@ -464,21 +466,21 @@ state 25
 
 state 26
 
-    (44) return_variables -> return_variables COMMA KEY .
+    (45) return_variables -> return_variables COMMA KEY .
     (23) keypath -> KEY . DOT KEY
 
-    COMMA           reduce using rule 44 (return_variables -> return_variables COMMA KEY .)
-    $end            reduce using rule 44 (return_variables -> return_variables COMMA KEY .)
+    COMMA           reduce using rule 45 (return_variables -> return_variables COMMA KEY .)
+    $end            reduce using rule 45 (return_variables -> return_variables COMMA KEY .)
     DOT             shift and go to state 28
 
 
 state 27
 
-    (45) return_variables -> return_variables COMMA keypath .
+    (46) return_variables -> return_variables COMMA keypath .
     (24) keypath -> keypath . DOT KEY
 
-    COMMA           reduce using rule 45 (return_variables -> return_variables COMMA keypath .)
-    $end            reduce using rule 45 (return_variables -> return_variables COMMA keypath .)
+    COMMA           reduce using rule 46 (return_variables -> return_variables COMMA keypath .)
+    $end            reduce using rule 46 (return_variables -> return_variables COMMA keypath .)
     DOT             shift and go to state 29
 
 
@@ -498,129 +500,129 @@ state 29
 
 state 30
 
-    (32) literals -> literals COMMA literals .
-    (32) literals -> literals . COMMA literals
-    (33) literals -> literals . RIGHT_ARROW literals
-    (34) literals -> literals . LEFT_ARROW literals
-    (35) literals -> literals . labeled_edge literals
-    (29) labeled_edge -> . DASH edge_condition DASH GREATERTHAN
-    (30) labeled_edge -> . LESSTHAN DASH edge_condition DASH
+    (33) literals -> literals COMMA literals .
+    (33) literals -> literals . COMMA literals
+    (34) literals -> literals . RIGHT_ARROW literals
+    (35) literals -> literals . LEFT_ARROW literals
+    (36) literals -> literals . labeled_edge literals
+    (30) labeled_edge -> . DASH edge_condition DASH GREATERTHAN
+    (31) labeled_edge -> . LESSTHAN DASH edge_condition DASH
 
   ! shift/reduce conflict for COMMA resolved as shift
   ! shift/reduce conflict for RIGHT_ARROW resolved as shift
   ! shift/reduce conflict for LEFT_ARROW resolved as shift
   ! shift/reduce conflict for DASH resolved as shift
   ! shift/reduce conflict for LESSTHAN resolved as shift
-    WHERE           reduce using rule 32 (literals -> literals COMMA literals .)
-    RETURN          reduce using rule 32 (literals -> literals COMMA literals .)
-    $end            reduce using rule 32 (literals -> literals COMMA literals .)
+    WHERE           reduce using rule 33 (literals -> literals COMMA literals .)
+    RETURN          reduce using rule 33 (literals -> literals COMMA literals .)
+    $end            reduce using rule 33 (literals -> literals COMMA literals .)
     COMMA           shift and go to state 17
     RIGHT_ARROW     shift and go to state 18
     LEFT_ARROW      shift and go to state 19
     DASH            shift and go to state 22
     LESSTHAN        shift and go to state 23
 
-  ! COMMA           [ reduce using rule 32 (literals -> literals COMMA literals .) ]
-  ! RIGHT_ARROW     [ reduce using rule 32 (literals -> literals COMMA literals .) ]
-  ! LEFT_ARROW      [ reduce using rule 32 (literals -> literals COMMA literals .) ]
-  ! DASH            [ reduce using rule 32 (literals -> literals COMMA literals .) ]
-  ! LESSTHAN        [ reduce using rule 32 (literals -> literals COMMA literals .) ]
+  ! COMMA           [ reduce using rule 33 (literals -> literals COMMA literals .) ]
+  ! RIGHT_ARROW     [ reduce using rule 33 (literals -> literals COMMA literals .) ]
+  ! LEFT_ARROW      [ reduce using rule 33 (literals -> literals COMMA literals .) ]
+  ! DASH            [ reduce using rule 33 (literals -> literals COMMA literals .) ]
+  ! LESSTHAN        [ reduce using rule 33 (literals -> literals COMMA literals .) ]
 
     labeled_edge                   shift and go to state 20
 
 state 31
 
-    (33) literals -> literals RIGHT_ARROW literals .
-    (32) literals -> literals . COMMA literals
-    (33) literals -> literals . RIGHT_ARROW literals
-    (34) literals -> literals . LEFT_ARROW literals
-    (35) literals -> literals . labeled_edge literals
-    (29) labeled_edge -> . DASH edge_condition DASH GREATERTHAN
-    (30) labeled_edge -> . LESSTHAN DASH edge_condition DASH
+    (34) literals -> literals RIGHT_ARROW literals .
+    (33) literals -> literals . COMMA literals
+    (34) literals -> literals . RIGHT_ARROW literals
+    (35) literals -> literals . LEFT_ARROW literals
+    (36) literals -> literals . labeled_edge literals
+    (30) labeled_edge -> . DASH edge_condition DASH GREATERTHAN
+    (31) labeled_edge -> . LESSTHAN DASH edge_condition DASH
 
   ! shift/reduce conflict for COMMA resolved as shift
   ! shift/reduce conflict for RIGHT_ARROW resolved as shift
   ! shift/reduce conflict for LEFT_ARROW resolved as shift
   ! shift/reduce conflict for DASH resolved as shift
   ! shift/reduce conflict for LESSTHAN resolved as shift
-    WHERE           reduce using rule 33 (literals -> literals RIGHT_ARROW literals .)
-    RETURN          reduce using rule 33 (literals -> literals RIGHT_ARROW literals .)
-    $end            reduce using rule 33 (literals -> literals RIGHT_ARROW literals .)
+    WHERE           reduce using rule 34 (literals -> literals RIGHT_ARROW literals .)
+    RETURN          reduce using rule 34 (literals -> literals RIGHT_ARROW literals .)
+    $end            reduce using rule 34 (literals -> literals RIGHT_ARROW literals .)
     COMMA           shift and go to state 17
     RIGHT_ARROW     shift and go to state 18
     LEFT_ARROW      shift and go to state 19
     DASH            shift and go to state 22
     LESSTHAN        shift and go to state 23
 
-  ! COMMA           [ reduce using rule 33 (literals -> literals RIGHT_ARROW literals .) ]
-  ! RIGHT_ARROW     [ reduce using rule 33 (literals -> literals RIGHT_ARROW literals .) ]
-  ! LEFT_ARROW      [ reduce using rule 33 (literals -> literals RIGHT_ARROW literals .) ]
-  ! DASH            [ reduce using rule 33 (literals -> literals RIGHT_ARROW literals .) ]
-  ! LESSTHAN        [ reduce using rule 33 (literals -> literals RIGHT_ARROW literals .) ]
+  ! COMMA           [ reduce using rule 34 (literals -> literals RIGHT_ARROW literals .) ]
+  ! RIGHT_ARROW     [ reduce using rule 34 (literals -> literals RIGHT_ARROW literals .) ]
+  ! LEFT_ARROW      [ reduce using rule 34 (literals -> literals RIGHT_ARROW literals .) ]
+  ! DASH            [ reduce using rule 34 (literals -> literals RIGHT_ARROW literals .) ]
+  ! LESSTHAN        [ reduce using rule 34 (literals -> literals RIGHT_ARROW literals .) ]
 
     labeled_edge                   shift and go to state 20
 
 state 32
 
-    (34) literals -> literals LEFT_ARROW literals .
-    (32) literals -> literals . COMMA literals
-    (33) literals -> literals . RIGHT_ARROW literals
-    (34) literals -> literals . LEFT_ARROW literals
-    (35) literals -> literals . labeled_edge literals
-    (29) labeled_edge -> . DASH edge_condition DASH GREATERTHAN
-    (30) labeled_edge -> . LESSTHAN DASH edge_condition DASH
+    (35) literals -> literals LEFT_ARROW literals .
+    (33) literals -> literals . COMMA literals
+    (34) literals -> literals . RIGHT_ARROW literals
+    (35) literals -> literals . LEFT_ARROW literals
+    (36) literals -> literals . labeled_edge literals
+    (30) labeled_edge -> . DASH edge_condition DASH GREATERTHAN
+    (31) labeled_edge -> . LESSTHAN DASH edge_condition DASH
 
   ! shift/reduce conflict for COMMA resolved as shift
   ! shift/reduce conflict for RIGHT_ARROW resolved as shift
   ! shift/reduce conflict for LEFT_ARROW resolved as shift
   ! shift/reduce conflict for DASH resolved as shift
   ! shift/reduce conflict for LESSTHAN resolved as shift
-    WHERE           reduce using rule 34 (literals -> literals LEFT_ARROW literals .)
-    RETURN          reduce using rule 34 (literals -> literals LEFT_ARROW literals .)
-    $end            reduce using rule 34 (literals -> literals LEFT_ARROW literals .)
+    WHERE           reduce using rule 35 (literals -> literals LEFT_ARROW literals .)
+    RETURN          reduce using rule 35 (literals -> literals LEFT_ARROW literals .)
+    $end            reduce using rule 35 (literals -> literals LEFT_ARROW literals .)
     COMMA           shift and go to state 17
     RIGHT_ARROW     shift and go to state 18
     LEFT_ARROW      shift and go to state 19
     DASH            shift and go to state 22
     LESSTHAN        shift and go to state 23
 
-  ! COMMA           [ reduce using rule 34 (literals -> literals LEFT_ARROW literals .) ]
-  ! RIGHT_ARROW     [ reduce using rule 34 (literals -> literals LEFT_ARROW literals .) ]
-  ! LEFT_ARROW      [ reduce using rule 34 (literals -> literals LEFT_ARROW literals .) ]
-  ! DASH            [ reduce using rule 34 (literals -> literals LEFT_ARROW literals .) ]
-  ! LESSTHAN        [ reduce using rule 34 (literals -> literals LEFT_ARROW literals .) ]
+  ! COMMA           [ reduce using rule 35 (literals -> literals LEFT_ARROW literals .) ]
+  ! RIGHT_ARROW     [ reduce using rule 35 (literals -> literals LEFT_ARROW literals .) ]
+  ! LEFT_ARROW      [ reduce using rule 35 (literals -> literals LEFT_ARROW literals .) ]
+  ! DASH            [ reduce using rule 35 (literals -> literals LEFT_ARROW literals .) ]
+  ! LESSTHAN        [ reduce using rule 35 (literals -> literals LEFT_ARROW literals .) ]
 
     labeled_edge                   shift and go to state 20
 
 state 33
 
-    (35) literals -> literals labeled_edge literals .
-    (32) literals -> literals . COMMA literals
-    (33) literals -> literals . RIGHT_ARROW literals
-    (34) literals -> literals . LEFT_ARROW literals
-    (35) literals -> literals . labeled_edge literals
-    (29) labeled_edge -> . DASH edge_condition DASH GREATERTHAN
-    (30) labeled_edge -> . LESSTHAN DASH edge_condition DASH
+    (36) literals -> literals labeled_edge literals .
+    (33) literals -> literals . COMMA literals
+    (34) literals -> literals . RIGHT_ARROW literals
+    (35) literals -> literals . LEFT_ARROW literals
+    (36) literals -> literals . labeled_edge literals
+    (30) labeled_edge -> . DASH edge_condition DASH GREATERTHAN
+    (31) labeled_edge -> . LESSTHAN DASH edge_condition DASH
 
   ! shift/reduce conflict for COMMA resolved as shift
   ! shift/reduce conflict for RIGHT_ARROW resolved as shift
   ! shift/reduce conflict for LEFT_ARROW resolved as shift
   ! shift/reduce conflict for DASH resolved as shift
   ! shift/reduce conflict for LESSTHAN resolved as shift
-    WHERE           reduce using rule 35 (literals -> literals labeled_edge literals .)
-    RETURN          reduce using rule 35 (literals -> literals labeled_edge literals .)
-    $end            reduce using rule 35 (literals -> literals labeled_edge literals .)
+    WHERE           reduce using rule 36 (literals -> literals labeled_edge literals .)
+    RETURN          reduce using rule 36 (literals -> literals labeled_edge literals .)
+    $end            reduce using rule 36 (literals -> literals labeled_edge literals .)
     COMMA           shift and go to state 17
     RIGHT_ARROW     shift and go to state 18
     LEFT_ARROW      shift and go to state 19
     DASH            shift and go to state 22
     LESSTHAN        shift and go to state 23
 
-  ! COMMA           [ reduce using rule 35 (literals -> literals labeled_edge literals .) ]
-  ! RIGHT_ARROW     [ reduce using rule 35 (literals -> literals labeled_edge literals .) ]
-  ! LEFT_ARROW      [ reduce using rule 35 (literals -> literals labeled_edge literals .) ]
-  ! DASH            [ reduce using rule 35 (literals -> literals labeled_edge literals .) ]
-  ! LESSTHAN        [ reduce using rule 35 (literals -> literals labeled_edge literals .) ]
+  ! COMMA           [ reduce using rule 36 (literals -> literals labeled_edge literals .) ]
+  ! RIGHT_ARROW     [ reduce using rule 36 (literals -> literals labeled_edge literals .) ]
+  ! LEFT_ARROW      [ reduce using rule 36 (literals -> literals labeled_edge literals .) ]
+  ! DASH            [ reduce using rule 36 (literals -> literals labeled_edge literals .) ]
+  ! LESSTHAN        [ reduce using rule 36 (literals -> literals labeled_edge literals .) ]
 
     labeled_edge                   shift and go to state 20
 
@@ -715,33 +717,36 @@ state 38
 
 state 39
 
-    (29) labeled_edge -> DASH edge_condition . DASH GREATERTHAN
+    (30) labeled_edge -> DASH edge_condition . DASH GREATERTHAN
 
     DASH            shift and go to state 57
 
 
 state 40
 
-    (25) edge_condition -> LBRACKET . COLON NAME RBRACKET
-    (26) edge_condition -> LBRACKET . COLON NAME condition_list RBRACKET
-    (27) edge_condition -> LBRACKET . KEY COLON NAME RBRACKET
-    (28) edge_condition -> LBRACKET . KEY COLON NAME condition_list RBRACKET
+    (25) edge_condition -> LBRACKET . RBRACKET
+    (26) edge_condition -> LBRACKET . COLON NAME RBRACKET
+    (27) edge_condition -> LBRACKET . COLON NAME condition_list RBRACKET
+    (28) edge_condition -> LBRACKET . KEY COLON NAME RBRACKET
+    (29) edge_condition -> LBRACKET . KEY COLON NAME condition_list RBRACKET
 
-    COLON           shift and go to state 58
-    KEY             shift and go to state 59
+    RBRACKET        shift and go to state 58
+    COLON           shift and go to state 59
+    KEY             shift and go to state 60
 
 
 state 41
 
-    (30) labeled_edge -> LESSTHAN DASH . edge_condition DASH
-    (25) edge_condition -> . LBRACKET COLON NAME RBRACKET
-    (26) edge_condition -> . LBRACKET COLON NAME condition_list RBRACKET
-    (27) edge_condition -> . LBRACKET KEY COLON NAME RBRACKET
-    (28) edge_condition -> . LBRACKET KEY COLON NAME condition_list RBRACKET
+    (31) labeled_edge -> LESSTHAN DASH . edge_condition DASH
+    (25) edge_condition -> . LBRACKET RBRACKET
+    (26) edge_condition -> . LBRACKET COLON NAME RBRACKET
+    (27) edge_condition -> . LBRACKET COLON NAME condition_list RBRACKET
+    (28) edge_condition -> . LBRACKET KEY COLON NAME RBRACKET
+    (29) edge_condition -> . LBRACKET KEY COLON NAME condition_list RBRACKET
 
     LBRACKET        shift and go to state 40
 
-    edge_condition                 shift and go to state 60
+    edge_condition                 shift and go to state 61
 
 state 42
 
@@ -762,14 +767,14 @@ state 43
     (3) node_clause -> LPAREN KEY COLON . NAME RPAREN
     (4) node_clause -> LPAREN KEY COLON . NAME condition_list RPAREN
 
-    NAME            shift and go to state 61
+    NAME            shift and go to state 62
 
 
 state 44
 
     (2) node_clause -> LPAREN COLON NAME . RPAREN
 
-    RPAREN          shift and go to state 62
+    RPAREN          shift and go to state 63
 
 
 state 45
@@ -832,7 +837,7 @@ state 47
     LPAREN          shift and go to state 37
     KEY             shift and go to state 38
 
-    constraint                     shift and go to state 63
+    constraint                     shift and go to state 64
     keypath                        shift and go to state 35
 
 state 48
@@ -857,7 +862,7 @@ state 48
     LPAREN          shift and go to state 37
     KEY             shift and go to state 38
 
-    constraint                     shift and go to state 64
+    constraint                     shift and go to state 65
     keypath                        shift and go to state 35
 
 state 49
@@ -868,45 +873,45 @@ state 49
     (23) keypath -> . KEY DOT KEY
     (24) keypath -> . keypath DOT KEY
 
-    STRING          shift and go to state 66
-    INTEGER         shift and go to state 67
+    STRING          shift and go to state 67
+    INTEGER         shift and go to state 68
     KEY             shift and go to state 38
 
-    keypath                        shift and go to state 65
+    keypath                        shift and go to state 66
 
 state 50
 
     (13) constraint -> keypath NOT_EQUAL . INTEGER
 
-    INTEGER         shift and go to state 68
+    INTEGER         shift and go to state 69
 
 
 state 51
 
     (14) constraint -> keypath GREATERTHAN . INTEGER
 
-    INTEGER         shift and go to state 69
+    INTEGER         shift and go to state 70
 
 
 state 52
 
     (15) constraint -> keypath GREATERTHAN_OR_EQUAL . INTEGER
 
-    INTEGER         shift and go to state 70
+    INTEGER         shift and go to state 71
 
 
 state 53
 
     (16) constraint -> keypath LESSTHAN . INTEGER
 
-    INTEGER         shift and go to state 71
+    INTEGER         shift and go to state 72
 
 
 state 54
 
     (17) constraint -> keypath LESSTHAN_OR_EQUAL . INTEGER
 
-    INTEGER         shift and go to state 72
+    INTEGER         shift and go to state 73
 
 
 state 55
@@ -932,42 +937,49 @@ state 56
     (18) constraint -> constraint . OR constraint
     (19) constraint -> constraint . AND constraint
 
-    RPAREN          shift and go to state 73
+    RPAREN          shift and go to state 74
     OR              shift and go to state 47
     AND             shift and go to state 48
 
 
 state 57
 
-    (29) labeled_edge -> DASH edge_condition DASH . GREATERTHAN
+    (30) labeled_edge -> DASH edge_condition DASH . GREATERTHAN
 
-    GREATERTHAN     shift and go to state 74
+    GREATERTHAN     shift and go to state 75
 
 
 state 58
 
-    (25) edge_condition -> LBRACKET COLON . NAME RBRACKET
-    (26) edge_condition -> LBRACKET COLON . NAME condition_list RBRACKET
+    (25) edge_condition -> LBRACKET RBRACKET .
 
-    NAME            shift and go to state 75
+    DASH            reduce using rule 25 (edge_condition -> LBRACKET RBRACKET .)
 
 
 state 59
 
-    (27) edge_condition -> LBRACKET KEY . COLON NAME RBRACKET
-    (28) edge_condition -> LBRACKET KEY . COLON NAME condition_list RBRACKET
+    (26) edge_condition -> LBRACKET COLON . NAME RBRACKET
+    (27) edge_condition -> LBRACKET COLON . NAME condition_list RBRACKET
 
-    COLON           shift and go to state 76
+    NAME            shift and go to state 76
 
 
 state 60
 
-    (30) labeled_edge -> LESSTHAN DASH edge_condition . DASH
+    (28) edge_condition -> LBRACKET KEY . COLON NAME RBRACKET
+    (29) edge_condition -> LBRACKET KEY . COLON NAME condition_list RBRACKET
 
-    DASH            shift and go to state 77
+    COLON           shift and go to state 77
 
 
 state 61
+
+    (31) labeled_edge -> LESSTHAN DASH edge_condition . DASH
+
+    DASH            shift and go to state 78
+
+
+state 62
 
     (3) node_clause -> LPAREN KEY COLON NAME . RPAREN
     (4) node_clause -> LPAREN KEY COLON NAME . condition_list RPAREN
@@ -977,13 +989,13 @@ state 61
     (8) condition_list -> . LCURLEY condition_list RCURLEY
     (9) condition_list -> . KEY COLON condition_list
 
-    RPAREN          shift and go to state 79
-    KEY             shift and go to state 78
-    LCURLEY         shift and go to state 81
+    RPAREN          shift and go to state 80
+    KEY             shift and go to state 79
+    LCURLEY         shift and go to state 82
 
-    condition_list                 shift and go to state 80
+    condition_list                 shift and go to state 81
 
-state 62
+state 63
 
     (2) node_clause -> LPAREN COLON NAME RPAREN .
 
@@ -997,7 +1009,7 @@ state 62
     $end            reduce using rule 2 (node_clause -> LPAREN COLON NAME RPAREN .)
 
 
-state 63
+state 64
 
     (18) constraint -> constraint OR constraint .
     (18) constraint -> constraint . OR constraint
@@ -1014,7 +1026,7 @@ state 63
   ! AND             [ reduce using rule 18 (constraint -> constraint OR constraint .) ]
 
 
-state 64
+state 65
 
     (19) constraint -> constraint AND constraint .
     (18) constraint -> constraint . OR constraint
@@ -1031,7 +1043,7 @@ state 64
   ! AND             [ reduce using rule 19 (constraint -> constraint AND constraint .) ]
 
 
-state 65
+state 66
 
     (12) constraint -> keypath EQUALS keypath .
     (24) keypath -> keypath . DOT KEY
@@ -1043,7 +1055,7 @@ state 65
     DOT             shift and go to state 29
 
 
-state 66
+state 67
 
     (10) constraint -> keypath EQUALS STRING .
 
@@ -1053,7 +1065,7 @@ state 66
     RPAREN          reduce using rule 10 (constraint -> keypath EQUALS STRING .)
 
 
-state 67
+state 68
 
     (11) constraint -> keypath EQUALS INTEGER .
 
@@ -1063,7 +1075,7 @@ state 67
     RPAREN          reduce using rule 11 (constraint -> keypath EQUALS INTEGER .)
 
 
-state 68
+state 69
 
     (13) constraint -> keypath NOT_EQUAL INTEGER .
 
@@ -1073,7 +1085,7 @@ state 68
     RPAREN          reduce using rule 13 (constraint -> keypath NOT_EQUAL INTEGER .)
 
 
-state 69
+state 70
 
     (14) constraint -> keypath GREATERTHAN INTEGER .
 
@@ -1083,7 +1095,7 @@ state 69
     RPAREN          reduce using rule 14 (constraint -> keypath GREATERTHAN INTEGER .)
 
 
-state 70
+state 71
 
     (15) constraint -> keypath GREATERTHAN_OR_EQUAL INTEGER .
 
@@ -1093,7 +1105,7 @@ state 70
     RPAREN          reduce using rule 15 (constraint -> keypath GREATERTHAN_OR_EQUAL INTEGER .)
 
 
-state 71
+state 72
 
     (16) constraint -> keypath LESSTHAN INTEGER .
 
@@ -1103,7 +1115,7 @@ state 71
     RPAREN          reduce using rule 16 (constraint -> keypath LESSTHAN INTEGER .)
 
 
-state 72
+state 73
 
     (17) constraint -> keypath LESSTHAN_OR_EQUAL INTEGER .
 
@@ -1113,7 +1125,7 @@ state 72
     RPAREN          reduce using rule 17 (constraint -> keypath LESSTHAN_OR_EQUAL INTEGER .)
 
 
-state 73
+state 74
 
     (21) constraint -> LPAREN constraint RPAREN .
 
@@ -1123,54 +1135,54 @@ state 73
     RPAREN          reduce using rule 21 (constraint -> LPAREN constraint RPAREN .)
 
 
-state 74
-
-    (29) labeled_edge -> DASH edge_condition DASH GREATERTHAN .
-
-    LPAREN          reduce using rule 29 (labeled_edge -> DASH edge_condition DASH GREATERTHAN .)
-
-
 state 75
 
-    (25) edge_condition -> LBRACKET COLON NAME . RBRACKET
-    (26) edge_condition -> LBRACKET COLON NAME . condition_list RBRACKET
+    (30) labeled_edge -> DASH edge_condition DASH GREATERTHAN .
+
+    LPAREN          reduce using rule 30 (labeled_edge -> DASH edge_condition DASH GREATERTHAN .)
+
+
+state 76
+
+    (26) edge_condition -> LBRACKET COLON NAME . RBRACKET
+    (27) edge_condition -> LBRACKET COLON NAME . condition_list RBRACKET
     (5) condition_list -> . KEY COLON STRING
     (6) condition_list -> . KEY COLON INTEGER
     (7) condition_list -> . condition_list COMMA condition_list
     (8) condition_list -> . LCURLEY condition_list RCURLEY
     (9) condition_list -> . KEY COLON condition_list
 
-    RBRACKET        shift and go to state 82
-    KEY             shift and go to state 78
-    LCURLEY         shift and go to state 81
+    RBRACKET        shift and go to state 83
+    KEY             shift and go to state 79
+    LCURLEY         shift and go to state 82
 
-    condition_list                 shift and go to state 83
-
-state 76
-
-    (27) edge_condition -> LBRACKET KEY COLON . NAME RBRACKET
-    (28) edge_condition -> LBRACKET KEY COLON . NAME condition_list RBRACKET
-
-    NAME            shift and go to state 84
-
+    condition_list                 shift and go to state 84
 
 state 77
 
-    (30) labeled_edge -> LESSTHAN DASH edge_condition DASH .
+    (28) edge_condition -> LBRACKET KEY COLON . NAME RBRACKET
+    (29) edge_condition -> LBRACKET KEY COLON . NAME condition_list RBRACKET
 
-    LPAREN          reduce using rule 30 (labeled_edge -> LESSTHAN DASH edge_condition DASH .)
+    NAME            shift and go to state 85
 
 
 state 78
+
+    (31) labeled_edge -> LESSTHAN DASH edge_condition DASH .
+
+    LPAREN          reduce using rule 31 (labeled_edge -> LESSTHAN DASH edge_condition DASH .)
+
+
+state 79
 
     (5) condition_list -> KEY . COLON STRING
     (6) condition_list -> KEY . COLON INTEGER
     (9) condition_list -> KEY . COLON condition_list
 
-    COLON           shift and go to state 85
+    COLON           shift and go to state 86
 
 
-state 79
+state 80
 
     (3) node_clause -> LPAREN KEY COLON NAME RPAREN .
 
@@ -1184,16 +1196,16 @@ state 79
     $end            reduce using rule 3 (node_clause -> LPAREN KEY COLON NAME RPAREN .)
 
 
-state 80
+state 81
 
     (4) node_clause -> LPAREN KEY COLON NAME condition_list . RPAREN
     (7) condition_list -> condition_list . COMMA condition_list
 
-    RPAREN          shift and go to state 86
-    COMMA           shift and go to state 87
+    RPAREN          shift and go to state 87
+    COMMA           shift and go to state 88
 
 
-state 81
+state 82
 
     (8) condition_list -> LCURLEY . condition_list RCURLEY
     (5) condition_list -> . KEY COLON STRING
@@ -1202,44 +1214,44 @@ state 81
     (8) condition_list -> . LCURLEY condition_list RCURLEY
     (9) condition_list -> . KEY COLON condition_list
 
-    KEY             shift and go to state 78
-    LCURLEY         shift and go to state 81
+    KEY             shift and go to state 79
+    LCURLEY         shift and go to state 82
 
-    condition_list                 shift and go to state 88
-
-state 82
-
-    (25) edge_condition -> LBRACKET COLON NAME RBRACKET .
-
-    DASH            reduce using rule 25 (edge_condition -> LBRACKET COLON NAME RBRACKET .)
-
+    condition_list                 shift and go to state 89
 
 state 83
 
-    (26) edge_condition -> LBRACKET COLON NAME condition_list . RBRACKET
-    (7) condition_list -> condition_list . COMMA condition_list
+    (26) edge_condition -> LBRACKET COLON NAME RBRACKET .
 
-    RBRACKET        shift and go to state 89
-    COMMA           shift and go to state 87
+    DASH            reduce using rule 26 (edge_condition -> LBRACKET COLON NAME RBRACKET .)
 
 
 state 84
 
-    (27) edge_condition -> LBRACKET KEY COLON NAME . RBRACKET
-    (28) edge_condition -> LBRACKET KEY COLON NAME . condition_list RBRACKET
+    (27) edge_condition -> LBRACKET COLON NAME condition_list . RBRACKET
+    (7) condition_list -> condition_list . COMMA condition_list
+
+    RBRACKET        shift and go to state 90
+    COMMA           shift and go to state 88
+
+
+state 85
+
+    (28) edge_condition -> LBRACKET KEY COLON NAME . RBRACKET
+    (29) edge_condition -> LBRACKET KEY COLON NAME . condition_list RBRACKET
     (5) condition_list -> . KEY COLON STRING
     (6) condition_list -> . KEY COLON INTEGER
     (7) condition_list -> . condition_list COMMA condition_list
     (8) condition_list -> . LCURLEY condition_list RCURLEY
     (9) condition_list -> . KEY COLON condition_list
 
-    RBRACKET        shift and go to state 90
-    KEY             shift and go to state 78
-    LCURLEY         shift and go to state 81
+    RBRACKET        shift and go to state 91
+    KEY             shift and go to state 79
+    LCURLEY         shift and go to state 82
 
-    condition_list                 shift and go to state 91
+    condition_list                 shift and go to state 92
 
-state 85
+state 86
 
     (5) condition_list -> KEY COLON . STRING
     (6) condition_list -> KEY COLON . INTEGER
@@ -1250,14 +1262,14 @@ state 85
     (8) condition_list -> . LCURLEY condition_list RCURLEY
     (9) condition_list -> . KEY COLON condition_list
 
-    STRING          shift and go to state 92
-    INTEGER         shift and go to state 93
-    KEY             shift and go to state 78
-    LCURLEY         shift and go to state 81
+    STRING          shift and go to state 93
+    INTEGER         shift and go to state 94
+    KEY             shift and go to state 79
+    LCURLEY         shift and go to state 82
 
-    condition_list                 shift and go to state 94
+    condition_list                 shift and go to state 95
 
-state 86
+state 87
 
     (4) node_clause -> LPAREN KEY COLON NAME condition_list RPAREN .
 
@@ -1271,7 +1283,7 @@ state 86
     $end            reduce using rule 4 (node_clause -> LPAREN KEY COLON NAME condition_list RPAREN .)
 
 
-state 87
+state 88
 
     (7) condition_list -> condition_list COMMA . condition_list
     (5) condition_list -> . KEY COLON STRING
@@ -1280,44 +1292,44 @@ state 87
     (8) condition_list -> . LCURLEY condition_list RCURLEY
     (9) condition_list -> . KEY COLON condition_list
 
-    KEY             shift and go to state 78
-    LCURLEY         shift and go to state 81
+    KEY             shift and go to state 79
+    LCURLEY         shift and go to state 82
 
-    condition_list                 shift and go to state 95
+    condition_list                 shift and go to state 96
 
-state 88
+state 89
 
     (8) condition_list -> LCURLEY condition_list . RCURLEY
     (7) condition_list -> condition_list . COMMA condition_list
 
-    RCURLEY         shift and go to state 96
-    COMMA           shift and go to state 87
-
-
-state 89
-
-    (26) edge_condition -> LBRACKET COLON NAME condition_list RBRACKET .
-
-    DASH            reduce using rule 26 (edge_condition -> LBRACKET COLON NAME condition_list RBRACKET .)
+    RCURLEY         shift and go to state 97
+    COMMA           shift and go to state 88
 
 
 state 90
 
-    (27) edge_condition -> LBRACKET KEY COLON NAME RBRACKET .
+    (27) edge_condition -> LBRACKET COLON NAME condition_list RBRACKET .
 
-    DASH            reduce using rule 27 (edge_condition -> LBRACKET KEY COLON NAME RBRACKET .)
+    DASH            reduce using rule 27 (edge_condition -> LBRACKET COLON NAME condition_list RBRACKET .)
 
 
 state 91
 
-    (28) edge_condition -> LBRACKET KEY COLON NAME condition_list . RBRACKET
-    (7) condition_list -> condition_list . COMMA condition_list
+    (28) edge_condition -> LBRACKET KEY COLON NAME RBRACKET .
 
-    RBRACKET        shift and go to state 97
-    COMMA           shift and go to state 87
+    DASH            reduce using rule 28 (edge_condition -> LBRACKET KEY COLON NAME RBRACKET .)
 
 
 state 92
+
+    (29) edge_condition -> LBRACKET KEY COLON NAME condition_list . RBRACKET
+    (7) condition_list -> condition_list . COMMA condition_list
+
+    RBRACKET        shift and go to state 98
+    COMMA           shift and go to state 88
+
+
+state 93
 
     (5) condition_list -> KEY COLON STRING .
 
@@ -1327,7 +1339,7 @@ state 92
     RCURLEY         reduce using rule 5 (condition_list -> KEY COLON STRING .)
 
 
-state 93
+state 94
 
     (6) condition_list -> KEY COLON INTEGER .
 
@@ -1337,7 +1349,7 @@ state 93
     RCURLEY         reduce using rule 6 (condition_list -> KEY COLON INTEGER .)
 
 
-state 94
+state 95
 
     (9) condition_list -> KEY COLON condition_list .
     (7) condition_list -> condition_list . COMMA condition_list
@@ -1346,12 +1358,12 @@ state 94
     RPAREN          reduce using rule 9 (condition_list -> KEY COLON condition_list .)
     RBRACKET        reduce using rule 9 (condition_list -> KEY COLON condition_list .)
     RCURLEY         reduce using rule 9 (condition_list -> KEY COLON condition_list .)
-    COMMA           shift and go to state 87
+    COMMA           shift and go to state 88
 
   ! COMMA           [ reduce using rule 9 (condition_list -> KEY COLON condition_list .) ]
 
 
-state 95
+state 96
 
     (7) condition_list -> condition_list COMMA condition_list .
     (7) condition_list -> condition_list . COMMA condition_list
@@ -1360,12 +1372,12 @@ state 95
     RPAREN          reduce using rule 7 (condition_list -> condition_list COMMA condition_list .)
     RBRACKET        reduce using rule 7 (condition_list -> condition_list COMMA condition_list .)
     RCURLEY         reduce using rule 7 (condition_list -> condition_list COMMA condition_list .)
-    COMMA           shift and go to state 87
+    COMMA           shift and go to state 88
 
   ! COMMA           [ reduce using rule 7 (condition_list -> condition_list COMMA condition_list .) ]
 
 
-state 96
+state 97
 
     (8) condition_list -> LCURLEY condition_list RCURLEY .
 
@@ -1375,11 +1387,11 @@ state 96
     RCURLEY         reduce using rule 8 (condition_list -> LCURLEY condition_list RCURLEY .)
 
 
-state 97
+state 98
 
-    (28) edge_condition -> LBRACKET KEY COLON NAME condition_list RBRACKET .
+    (29) edge_condition -> LBRACKET KEY COLON NAME condition_list RBRACKET .
 
-    DASH            reduce using rule 28 (edge_condition -> LBRACKET KEY COLON NAME condition_list RBRACKET .)
+    DASH            reduce using rule 29 (edge_condition -> LBRACKET KEY COLON NAME condition_list RBRACKET .)
 
 WARNING: 
 WARNING: Conflicts:
@@ -1406,9 +1418,9 @@ WARNING: shift/reduce conflict for DASH in state 33 resolved as shift
 WARNING: shift/reduce conflict for LESSTHAN in state 33 resolved as shift
 WARNING: shift/reduce conflict for OR in state 55 resolved as shift
 WARNING: shift/reduce conflict for AND in state 55 resolved as shift
-WARNING: shift/reduce conflict for OR in state 63 resolved as shift
-WARNING: shift/reduce conflict for AND in state 63 resolved as shift
 WARNING: shift/reduce conflict for OR in state 64 resolved as shift
 WARNING: shift/reduce conflict for AND in state 64 resolved as shift
-WARNING: shift/reduce conflict for COMMA in state 94 resolved as shift
+WARNING: shift/reduce conflict for OR in state 65 resolved as shift
+WARNING: shift/reduce conflict for AND in state 65 resolved as shift
 WARNING: shift/reduce conflict for COMMA in state 95 resolved as shift
+WARNING: shift/reduce conflict for COMMA in state 96 resolved as shift

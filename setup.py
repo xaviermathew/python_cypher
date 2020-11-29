@@ -3,9 +3,9 @@ setup(
     name = "PythonCypher",
     version = "0.1.2",
     packages = find_packages(),
-    scripts = ['python_cypher/cypher_tokenizer.py',
-               'python_cypher/cypher_parser.py',
-               'python_cypher/python_cypher.py'],
+    # scripts = ['python_cypher/cypher_tokenizer.py',
+    #            'python_cypher/cypher_parser.py',
+    #            'python_cypher/python_cypher.py'],
 
     # Project uses reStructuredText, so ensure that the docutils get
     # installed or upgraded on the target machine

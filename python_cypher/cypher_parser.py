@@ -290,12 +290,15 @@ def p_keypath(p):
 
 
 def p_edge_condition(p):
-    '''edge_condition : LBRACKET COLON NAME RBRACKET
+    '''edge_condition : LBRACKET RBRACKET
+                      | LBRACKET COLON NAME RBRACKET
                       | LBRACKET COLON NAME condition_list RBRACKET
                       | LBRACKET KEY COLON NAME RBRACKET
                       | LBRACKET KEY COLON NAME condition_list RBRACKET'''
     debug([e for e in p])
-    if p[2] == t_COLON:
+    if len(p) == 3:
+        p[0] = EdgeCondition()
+    elif p[2] == t_COLON:
         debug('############# p_edge_condition ####################')
         debug('p[2] == t_COLON')
         if len(p) == 6:
