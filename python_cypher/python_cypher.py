@@ -89,12 +89,10 @@ class CypherParserBaseClass(object):
         self.debug('all_designations:%s min_path_length:%s max_path_length:%s' % (
             all_designations, min_path_length, max_path_length
         ))
-        if max_path_length == float('infinity'):
-            max_path_length = None
         for _start, node_map in nx.all_pairs_dijkstra_path(graph_object, cutoff=max_path_length):
             for _end, path in node_map.items():
                 if min_path_length is not None and len(path) >= min_path_length:
-                    if len(all_designations) != len(path):
+                    if len(all_designations) != len(path) and max_path_length == float('infinity'):
                         if len(all_designations) != 2:
                             raise Exception("Can only handle 2 designations when max_path_length=infinity")
                         else:
@@ -139,13 +137,10 @@ class CypherParserBaseClass(object):
         elif isinstance(clause, Constraint):
             return self.eval_constraint(clause, assignment, graph_object)
 
-    def query(self, graph_object, query_string):
-        """Top-level function that's called by the parser when a query has
-           been transformed to its AST. This function routes the parsed
+    def yield_return_values(self, graph_object, parsed_query):
+        """This function routes the parsed
            query to a small number of high-level functions for handling
            specific types of queries (e.g. MATCH, CREATE, ...)"""
-        parsed_query = self.parse(query_string)
-
         def _test_match_where(clause, assignment, graph_object):
             sentinal = True  # Satisfied unless we fail
             for literal in clause.literals.literal_list:
@@ -262,6 +257,12 @@ class CypherParserBaseClass(object):
                         yield return_values
                     else:
                         raise Exception("Unhandled case in query function.")
+
+    def query(self, graph_object, query_string):
+        """Top-level function that's called by the parser when a query has
+           been transformed to its AST."""
+        parsed_query = self.parse(query_string)
+        yield from self.yield_return_values(graph_object, parsed_query)
 
     def head_create_query(self, graph_object, parsed_query):
         """For executing queries of the form CREATE... RETURN."""
