@@ -64,6 +64,8 @@ class CypherParserBaseClass(object):
 
     def yield_var_to_element(self, parsed_query, graph_object):
         all_designations = []
+        min_path_length = 1
+        max_path_length = 1
         # Track down atomic_facts from outer scope.
         atomic_facts = extract_atomic_facts(parsed_query)
         self.debug('######################## yield_var_to_element ##########################')
@@ -78,11 +80,28 @@ class CypherParserBaseClass(object):
                     self.debug(literal.__dict__)
                     if hasattr(literal, 'designation') and literal.designation is not None:
                         all_designations.append(literal.designation)
-        self.debug(all_designations)
-        for _start, node_map in nx.all_pairs_dijkstra_path(graph_object, cutoff=len(all_designations)):
+                    for edge in literal.connecting_edges:
+                        if edge.min_path_length:
+                            min_path_length += edge.min_path_length
+                        if edge.max_path_length:
+                            max_path_length += edge.max_path_length
+
+        self.debug('all_designations:%s min_path_length:%s max_path_length:%s' % (
+            all_designations, min_path_length, max_path_length
+        ))
+        if max_path_length == float('infinity'):
+            max_path_length = None
+        for _start, node_map in nx.all_pairs_dijkstra_path(graph_object, cutoff=max_path_length):
             for _end, path in node_map.items():
-                if len(path) == len(all_designations):
-                    yield dict(zip(all_designations, path))
+                if min_path_length is not None and len(path) >= min_path_length:
+                    if len(all_designations) != len(path):
+                        if len(all_designations) != 2:
+                            raise Exception("Can only handle 2 designations when max_path_length=infinity")
+                        else:
+                            designations = [all_designations[0]] + ['_v%s' % i for i in range(len(path) - 2)] + [all_designations[1]]
+                    else:
+                        designations = all_designations
+                    yield dict(zip(designations, path))
 
     def parse(self, query):
         """Calls yacc to parse the query string into an AST."""
