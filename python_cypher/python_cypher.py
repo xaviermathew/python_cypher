@@ -35,6 +35,7 @@ def designations_from_atomic_facts(atomic_facts):
 class CypherParserBaseClass(object):
     """The base class that specific parsers will inherit from. Certain methods
        must be defined in the child class. See the docs."""
+
     def __init__(self, debug_enabled=True, default_debug_level = 'WARN'):
         self.debug_instance = Debug(name='CypherParserBaseClass')
         # self.debug_instance.set_debug_level(default_debug_level)
@@ -48,7 +49,7 @@ class CypherParserBaseClass(object):
         # parser_debugger_instance.toggle_debug(force_state=debug_enabled)
         # tokenizer_debugger_instance.set_debug_level(default_debug_level)
         # tokenizer_debugger_instance.toggle_debug(force_state=debug_enabled)
-    
+
     # def set_debug_enabled(self, enabled):
     #     self.debug_instance.toggle_debug(force_state=enabled)
     #     ## ast modules
@@ -61,9 +62,8 @@ class CypherParserBaseClass(object):
     #     parser_debugger_instance.set_debug_level(level)
     #     tokenizer_debugger_instance.set_debug_level(level)
 
-
     def yield_var_to_element(self, parsed_query, graph_object):
-        all_designations = set()
+        all_designations = []
         # Track down atomic_facts from outer scope.
         atomic_facts = extract_atomic_facts(parsed_query)
         self.debug('######################## yield_var_to_element ##########################')
@@ -71,24 +71,18 @@ class CypherParserBaseClass(object):
             self.debug('fact')
             self.debug(fact.__dict__)
             if hasattr(fact, 'designation') and fact.designation is not None:
-                all_designations.add(fact.designation)
+                all_designations.append(fact.designation)
             elif hasattr(fact, 'literals'):
                 for literal in fact.literals.literal_list:
                     self.debug('literal')
                     self.debug(literal.__dict__)
-                    if (hasattr(literal, 'designation') and
-                            literal.designation is not None):
-                        all_designations.add(literal.designation)
-        all_designations = sorted(list(all_designations))
+                    if hasattr(literal, 'designation') and literal.designation is not None:
+                        all_designations.append(literal.designation)
         self.debug(all_designations)
-        domain = self._get_domain(graph_object)
-        self.debug('#### yield_var_to_element ####')
-        self.debug(domain)
-        for domain_assignment in itertools.product(
-                *[domain] * len(all_designations)):
-            var_to_element = {all_designations[index]: element for index,
-                              element in enumerate(domain_assignment)}
-            yield var_to_element
+        for _start, node_map in nx.all_pairs_dijkstra_path(graph_object, cutoff=len(all_designations)):
+            for _end, path in node_map.items():
+                if len(path) == len(all_designations):
+                    yield dict(zip(all_designations, path))
 
     def parse(self, query):
         """Calls yacc to parse the query string into an AST."""
@@ -169,9 +163,8 @@ class CypherParserBaseClass(object):
                                 graph_object, source_node, target_node):
                             self.debug(f"xxxxxxxxxxxxxxx> {edge_label} {one_edge_id}")
 
-                            one_edge = self._get_edge_from_id(
-                                graph_object, one_edge_id)
-                            
+                            one_edge = self._get_edge_from_id(graph_object, one_edge_id)
+
                             self.debug(f"yyyyyyyyyyyyyyy> {edge_label} {one_edge}")
                             if (edge_label is None or
                                     self._edge_class(one_edge) == edge_label):
@@ -202,6 +195,7 @@ class CypherParserBaseClass(object):
         else:
             # Importantly, we step through each assignment, and then for
             # each assignment, we step through each "clause" (need better name)
+            # import pdb;pdb.set_trace()
             for assignment in self.yield_var_to_element(
                     parsed_query, graph_object):
                 self.debug('########### python_cypher.query #############')
@@ -225,7 +219,6 @@ class CypherParserBaseClass(object):
                         for variable_path in clause.variable_list:
                             self.debug('########### python_cypher.query ReturnVar #############')
                             self.debug(assignment)
-                            self.debug(assignment[variable_path[0]])
                             self.debug(variable_path)
                             # I expect this will choke on edges if we ask for
                             # their properties to be returned
@@ -249,7 +242,6 @@ class CypherParserBaseClass(object):
                             return_values.append(return_value)
                         yield return_values
                     else:
-#                        import pdb; pdb.set_trace()
                         raise Exception("Unhandled case in query function.")
 
     def head_create_query(self, graph_object, parsed_query):
@@ -559,7 +551,6 @@ def extract_atomic_facts(query):
         elif isinstance(subquery, CreateClause):
             _recurse(subquery.create_clause)
         else:
-#            import pdb; pdb.set_trace()
             raise Exception(
                 'unhandled case in extract_atomic_facts:' + (
                     subquery.__class__.__name__))

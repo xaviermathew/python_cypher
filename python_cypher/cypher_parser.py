@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import re
+
 from .cypher_tokenizer import *
 from .debugger import *
 from ply import yacc
@@ -68,17 +70,21 @@ class ClassIs(AtomicFact):
 class EdgeCondition(AtomicFact):
     """Represents the constraint that an edge must have a specific
        label, or that it must be run in a specific direction."""
-    def __init__(self, edge_label=None, direction=None, designation=None, attribute_conditions=None):
+    def __init__(self, edge_label=None, direction=None, designation=None, attribute_conditions=None,
+                 min_path_length=1, max_path_length=1):
         debug('####################### EdgeCondition ########################')
         self.edge_label = edge_label
         self.designation = designation
         self.attribute_conditions = attribute_conditions or {}
+        self.min_path_length = min_path_length
+        self.max_path_length = max_path_length
 
 
 class EdgeExists(AtomicFact):
     """The constraint that an edge exists between two nodes, possibly
        having a specific label."""
-    def __init__(self, node_1, node_2, designation=None, edge_label=None, attribute_conditions=None):
+    def __init__(self, node_1, node_2, designation=None, edge_label=None, attribute_conditions=None,
+                 min_path_length=1, max_path_length=1):
         debug('####################### EdgeExist ########################')
         debug(attribute_conditions)
         self.node_1 = node_1
@@ -86,6 +92,8 @@ class EdgeExists(AtomicFact):
         self.edge_label = edge_label
         self.designation = designation
         self.attribute_conditions = attribute_conditions or {}
+        self.min_path_length = min_path_length
+        self.max_path_length = max_path_length
 
 
 class Node(object):
@@ -193,6 +201,7 @@ class FullQuery(object):
 def p_node_clause(p):
     '''node_clause : LPAREN KEY RPAREN
                    | LPAREN COLON NAME RPAREN
+                   | LPAREN KEY COLON condition_list RPAREN
                    | LPAREN KEY COLON NAME RPAREN
                    | LPAREN KEY COLON NAME condition_list RPAREN'''
     global next_anonymous_variable
@@ -203,21 +212,25 @@ def p_node_clause(p):
         p[0] = Node(node_class=p[3],
                     designation='_v' + str(next_anonymous_variable))
         next_anonymous_variable += 1
-    elif len(p) == 6:
+    elif len(p) == 6 and isinstance(p[4], str):
         # Node class name and variable
-        p[0] = Node(node_class=p[4], designation=p[2])
+        p[0] = Node(designation=p[2], node_class=p[4])
+    elif len(p) == 6 and isinstance(p[4], dict):
+        # Node class name and variable
+        p[0] = Node(designation=p[2], attribute_conditions=p[4])
     elif len(p) == 7:
         p[0] = Node(node_class=p[4], designation=p[2],
                     attribute_conditions=p[5])
 
 
 def p_condition(p):
-    '''condition_list : KEY COLON STRING
+    '''condition_list : KEY COLON BOOL
+                      | KEY COLON STRING
                       | KEY COLON INTEGER
                       | condition_list COMMA condition_list
                       | LCURLEY condition_list RCURLEY
                       | KEY COLON condition_list'''
-    
+
     if len(p) == 4 and p[2] == ':' and isinstance(p[3], str):
         p[0] = {p[1]: p[3].replace('"', '')}
     elif len(p) == 4 and p[2] == ':' and isinstance(p[3], int):
@@ -293,11 +306,31 @@ def p_edge_condition(p):
     '''edge_condition : LBRACKET RBRACKET
                       | LBRACKET COLON NAME RBRACKET
                       | LBRACKET COLON NAME condition_list RBRACKET
+                      | LBRACKET STAR INTEGER DOT DOT INTEGER RBRACKET
+                      | LBRACKET STAR DOT DOT INTEGER RBRACKET
+                      | LBRACKET STAR INTEGER DOT DOT RBRACKET
+                      | LBRACKET STAR RBRACKET
                       | LBRACKET KEY COLON NAME RBRACKET
                       | LBRACKET KEY COLON NAME condition_list RBRACKET'''
     debug([e for e in p])
     if len(p) == 3:
         p[0] = EdgeCondition()
+    elif re.escape(p[2]) == t_STAR:
+        if len(p) == 8:
+            min_path_length = p[3]
+            max_path_length = p[6]
+        elif len(p) == 7 and p[3] == '.':
+            min_path_length = 1
+            max_path_length = p[5]
+        elif len(p) == 7 and p[5] == '.':
+            min_path_length = 1
+            max_path_length = p[3]
+        elif len(p) == 4:
+            min_path_length = 1
+            max_path_length = float('infinity')
+        else:
+            raise Exception("Unhandled case for *_path_length in p_edge_condition")
+        p[0] = EdgeCondition(min_path_length=min_path_length, max_path_length=max_path_length)
     elif p[2] == t_COLON:
         debug('############# p_edge_condition ####################')
         debug('p[2] == t_COLON')
@@ -365,7 +398,9 @@ def p_literals(p):
                                p[3].literal_list[0].designation,
                                edge_label=p[2].edge_label,
                                designation=p[2].designation,
-                               attribute_conditions=p[2].attribute_conditions)
+                               attribute_conditions=p[2].attribute_conditions,
+                               min_path_length=p[2].min_path_length,
+                               max_path_length=p[2].max_path_length)
         p[0].literal_list[-1].connecting_edges.append(edge_fact)
         p[0].literal_list += p[3].literal_list
     elif isinstance(p[2], EdgeCondition) and p[2].direction == 'right_left':
@@ -374,7 +409,9 @@ def p_literals(p):
                                p[1].literal_list[-1].designation,
                                edge_label=p[2].edge_label,
                                designation=p[2].designation,
-                               attribute_conditions=p[2].attribute_conditions)
+                               attribute_conditions=p[2].attribute_conditions,
+                               min_path_length=p[2].min_path_length,
+                               max_path_length=p[2].max_path_length)
         p[0].literal_list[-1].connecting_edges.append(edge_fact)
         p[0].literal_list += p[3].literal_list
     else:
@@ -419,7 +456,6 @@ def p_return_variables(p):
 
 
 def p_error(p):
-#    import pdb; pdb.set_trace()
     debug(p)
     raise ParsingException("Generic error while parsing.")
 

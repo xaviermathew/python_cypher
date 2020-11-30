@@ -37,7 +37,10 @@ tokens = (
     'QUOTE',
     'INTEGER',
     'STRING',
-    'KEY',)
+    'KEY',
+    'STAR',
+    'BOOL',
+)
 
 
 t_LBRACKET = r'\['
@@ -59,7 +62,7 @@ t_QUOTE = r'"'
 t_LCURLEY = r'{'
 t_RCURLEY = r'}'
 t_COMMA = r','
-
+t_STAR = r'\*'
 t_ignore = r' '
 
 
@@ -109,6 +112,7 @@ def t_DOT(t):
 
 def t_NAME(t):
     r'[A-Z_]+[a-z0-9_]*'
+    # r'(?!True$)(?!False$)[A-Z_]+[a-z0-9_]*'
     return t
 
 
@@ -132,5 +136,11 @@ def t_STRING(t):
     r'"[A-Za-z0-9_\.]+"'
     t.value = t.value.replace('"', '')
     return t
+
+def t_BOOL(t):
+    r'(True)|(False)'
+    t.value = t.value == 'True'
+    return t
+
 
 cypher_tokenizer = lex.lex()
