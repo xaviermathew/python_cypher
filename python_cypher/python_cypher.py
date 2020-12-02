@@ -4,12 +4,12 @@ This script contains the ``CypherParserBaseClass``, which provides the basic
 functionality to parse Cypher queries and run them against graphs.
 """
 
-import itertools
-import networkx as nx
 import copy
 import hashlib
 import random
 import time
+
+from python_cypher.utils import get_all_paths
 from .cypher_tokenizer import *
 from .cypher_parser import *
 from .debugger import *
@@ -81,25 +81,31 @@ class CypherParserBaseClass(object):
                     if hasattr(literal, 'designation') and literal.designation is not None:
                         all_designations.append(literal.designation)
                     for edge in literal.connecting_edges:
+                        edge_constraint = []
                         if edge.min_path_length:
                             min_path_length += edge.min_path_length
+                            edge_constraint.append(edge.min_path_length)
                         if edge.max_path_length:
                             max_path_length += edge.max_path_length
+                            edge_constraint.append(edge.max_path_length)
+                        if edge_constraint != [1, 1]:
+                            all_designations.append(edge_constraint)
 
         self.debug('all_designations:%s min_path_length:%s max_path_length:%s' % (
             all_designations, min_path_length, max_path_length
         ))
-        for _start, node_map in nx.all_pairs_dijkstra_path(graph_object, cutoff=max_path_length):
-            for _end, path in node_map.items():
-                if min_path_length is not None and len(path) >= min_path_length:
-                    if len(all_designations) != len(path) and max_path_length == float('infinity'):
-                        if len(all_designations) != 2:
-                            raise Exception("Can only handle 2 designations when max_path_length=infinity")
-                        else:
-                            designations = [all_designations[0]] + ['_v%s' % i for i in range(len(path) - 2)] + [all_designations[1]]
-                    else:
-                        designations = all_designations
-                    yield dict(zip(designations, path))
+        if len([designation for designation in all_designations if isinstance(designation, list)]) > 1:
+            raise Exception('Cant have >1 variable length edge')
+
+        for path in get_all_paths(graph_object, min_path_length, max_path_length):
+            designations = []
+            for designation in all_designations:
+                if isinstance(designation, list):
+                    num_extra_nodes = len(path) - (len(all_designations) - 1)
+                    designations.extend(['_v%s' % i for i in range(num_extra_nodes)])
+                else:
+                    designations.append(designation)
+            yield dict(zip(designations, path))
 
     def parse(self, query):
         """Calls yacc to parse the query string into an AST."""
@@ -209,7 +215,6 @@ class CypherParserBaseClass(object):
         else:
             # Importantly, we step through each assignment, and then for
             # each assignment, we step through each "clause" (need better name)
-            # import pdb;pdb.set_trace()
             for assignment in self.yield_var_to_element(
                     parsed_query, graph_object):
                 self.debug('########### python_cypher.query #############')
