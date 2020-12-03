@@ -325,6 +325,9 @@ def p_edge_condition(p):
         elif len(p) == 7 and p[5] == '.':
             min_path_length = 1
             max_path_length = p[3]
+        elif len(p) == 6:
+            min_path_length = 1
+            max_path_length = float('infinity')
         elif len(p) == 4:
             min_path_length = 1
             max_path_length = float('infinity')

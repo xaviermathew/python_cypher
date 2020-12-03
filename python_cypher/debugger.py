@@ -1,6 +1,6 @@
 class Debug:
     class __Debug:
-        def __init__(self, default_level = 'WARN', enabled = True, name=''):
+        def __init__(self, default_level='WARN', enabled=True, name=''):
             print('Debugger name: {}'.format(name))
             self.debug_levels = {
                 'FATAL':0,
@@ -11,8 +11,8 @@ class Debug:
             self.is_debug_enabled = enabled
             self.debug_level = self.debug_levels.get(default_level, 0)
             self.name = name
-            
-        def debug(self, log, level='WARN'):
+
+        def debug(self, log, level='INFO'):
             """ Simple function to log processing with log levels
             :str log:
             :param log: String to be outputted
@@ -40,10 +40,12 @@ class Debug:
             else:
                 self.is_debug_enabled = force_state
             print('[{}] => force_state: {} > Debug is now {}'.format(self.name, force_state, 'On' if self.is_debug_enabled else 'Off'))
+
     instance = None
+
     def __init__(self, name):
         if not Debug.instance:
             Debug.instance = Debug.__Debug(name=name)
+
     def __getattr__(self, name):
         return getattr(self.instance, name)
-    

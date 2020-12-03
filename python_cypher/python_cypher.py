@@ -102,7 +102,7 @@ class CypherParserBaseClass(object):
             for designation in all_designations:
                 if isinstance(designation, list):
                     num_extra_nodes = len(path) - (len(all_designations) - 1)
-                    designations.extend(['_v%s' % i for i in range(num_extra_nodes)])
+                    designations.extend(['_n%s' % i for i in range(num_extra_nodes)])
                 else:
                     designations.append(designation)
             yield dict(zip(designations, path))
@@ -243,22 +243,38 @@ class CypherParserBaseClass(object):
                             # their properties to be returned
                             if not isinstance(variable_path, list):
                                 variable_path = [variable_path]
-                            if self._is_edge(
-                                    graph_object, assignment[variable_path[0]]):
-                                self.debug('############### _is_edge is True ##############')
-                                _get_node_or_edge = self._get_edge
-                            elif self._is_node(
-                                    graph_object, assignment[variable_path[0]]):
-                                self.debug('############### _is_node is True ##############')
-                                _get_node_or_edge = self._get_node
+                            if variable_path[0] in {'nodes', 'edges'}:
+                                if variable_path[0] == 'nodes':
+                                    _get_node_or_edge = self._get_node
+                                    _designation = '_n'
+                                elif variable_path[0] == 'edges':
+                                    _get_node_or_edge = self._get_edge
+                                    _designation = '_e'
+                                else:
+                                    raise Exception("This will never happen. I'm just keeping my editor happy")
+                                nodes_or_edges = [_get_node_or_edge(graph_object, assignment[designation])
+                                                for designation in assignment.keys()
+                                                if designation.startswith(_designation)]
+                                return_value = [self._attribute_value_from_node_keypath(node_or_edge, variable_path[1:])
+                                                for node_or_edge in nodes_or_edges]
+                                return_values.extend(return_value)
                             else:
-                                raise Exception("Neither a node nor an edge.")
-                            node_or_edge = _get_node_or_edge(
-                                graph_object, assignment[variable_path[0]])
-                            return_value = (
-                                self._attribute_value_from_node_keypath(
-                                    node_or_edge, variable_path[1:]))
-                            return_values.append(return_value)
+                                if self._is_edge(
+                                        graph_object, assignment[variable_path[0]]):
+                                    self.debug('############### _is_edge is True ##############')
+                                    _get_node_or_edge = self._get_edge
+                                elif self._is_node(
+                                        graph_object, assignment[variable_path[0]]):
+                                    self.debug('############### _is_node is True ##############')
+                                    _get_node_or_edge = self._get_node
+                                else:
+                                    raise Exception("Neither a node nor an edge.")
+                                node_or_edge = _get_node_or_edge(
+                                    graph_object, assignment[variable_path[0]])
+                                return_value = (
+                                    self._attribute_value_from_node_keypath(
+                                        node_or_edge, variable_path[1:]))
+                                return_values.append(return_value)
                         yield return_values
                     else:
                         raise Exception("Unhandled case in query function.")

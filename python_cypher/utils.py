@@ -31,5 +31,5 @@ def get_all_paths(G, min_path_length=None, max_path_length=None):
         for leaf in leaves:
             for path in nx.all_simple_paths(G, root, leaf):
                 if len(path) >= min_path_length:
-                    for n in range(min_path_length, max_path_length + 1):
+                    for n in range(min_path_length, min(len(path), max_path_length) + 1):
                         yield from window(path, n)
